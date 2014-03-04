@@ -4,28 +4,32 @@ import java.util.List;
 
 public class GuestManagerImpl implements GuestManager {
     
-        public void createNewGuest(Guest guest)
-        {
-            ;
+        @Override
+        public void createNewGuest(Guest guest) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
+        @Override
 	public void updateGuest(Guest guest)
         {
-            ;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
+        @Override
 	public void deleteGuest(Guest guest)
         {
-            ;
-        }
-
-	public List<Guest> findAllGuests()
-        {
-            return null;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
+        @Override
+	public List<Guest> findAllGuests()
+        {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        
+        @Override
 	public Guest getGuestById(Long id)
         {
-            return null;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 }

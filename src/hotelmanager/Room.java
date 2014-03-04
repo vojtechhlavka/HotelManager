@@ -27,6 +27,7 @@ public class Room {
          * @param floor floor of room
          * @param note note about room
          */
+        /*
         public Room(int number, int capacity, int floor, String note)
         {
             this.number = number;
@@ -34,4 +35,5 @@ public class Room {
             this.floor = floor;
             this.note = note;
         }
+        */
 }

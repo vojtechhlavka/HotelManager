@@ -4,28 +4,33 @@ import java.util.List;
 
 public class RoomManagerImpl implements RoomManager {
         
+        @Override
         public void createNewRoom(Room room)
         {
-            ;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Override
 	public void updateRoom(Room room)
         {
-            ;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
         
+        @Override
 	public void deleteRoom(Room room)
         {
-            ;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Override
 	public List<Room> findAllRooms()
         {
-            return null;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 	
+        @Override
         public Room getRoomById(Long id)
         {
-            return null;
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 }
