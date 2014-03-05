@@ -1,5 +1,5 @@
+import hotelmanager.HotelManagerImpl;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  *
@@ -7,18 +7,13 @@ import org.junit.Test;
  */
 public class HotelManagerImplTest {
     
-    public HotelManagerImplTest() {
-    }
-    
+    private HotelManagerImpl manager;
     
     @Before
     public void setUp() {
+        this.manager = new HotelManagerImpl();
     }
-    
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
+  
     // @Test
     // public void hello() {}
 }

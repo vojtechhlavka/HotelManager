@@ -9,9 +9,9 @@ import java.util.Objects;
 public class Room {
 
     private Long id;
-    private int number;
     private int capacity;
     private int floor;
+    private int number;
     private String note;
 
     /**
@@ -27,14 +27,6 @@ public class Room {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public int getCapacity() {
@@ -53,6 +45,14 @@ public class Room {
         this.floor = floor;
     }
 
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+    
     public String getNote() {
         return note;
     }
