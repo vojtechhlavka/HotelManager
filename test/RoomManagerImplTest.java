@@ -154,6 +154,41 @@ public class RoomManagerImplTest {
         }
     }
     
+    @Test
+    public void deleteRoom() {
+        Room room = newRoom(5, 1, 1, "Fine");
+        Room room2 = newRoom(4, 1, 2, "OK");
+        manager.createNewRoom(room);
+        manager.createNewRoom(room2);
+        
+        assertNotNull(manager.getRoomById(room.getId()));
+        assertNotNull(manager.getRoomById(room2.getId()));
+        manager.deleteRoom(room);
+        assertNull(manager.getRoomById(room.getId()));
+        assertNotNull(manager.getRoomById(room2.getId()));
+    }
+    
+    @Test
+    public void deleteRoomWithWrongAttribute() {
+        Room room = newRoom(4, 1, 1, "Yes!!");
+        manager.createNewRoom(room);
+        
+        try {
+            manager.deleteRoom(null);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //OK
+        }
+        
+        try {
+            room.setId(null);
+            manager.deleteRoom(room);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //Ok
+        }
+    }
+    
     private Room newRoom(int capacity, int floor, int number, String note) {
         Room room = new Room();
         room.setCapacity(capacity);
