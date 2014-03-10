@@ -80,6 +80,89 @@ public class HotelManagerImplTest {
 
     }
     
+    
+    
+    @Test
+    public void removeGuestFromRoomTest()
+    {
+        Room room = newRoom(4,1,1,"Poznámka");
+        Room room2 = newRoom(4,2,2,"Poznámka2");
+        Guest guest1 = newGuest("Jméno", "Příjmení", "123456789", Gender.MALE);
+        Guest guest2 = newGuest("Jméno2", "Příjmení2", "987654321", Gender.FEMALE);
+        Guest guest3 = newGuest("Jméno3", "Příjmení3", "111111111", Gender.MALE);
+        
+        manager.accommodateGuestInRoom(guest1, room);
+        manager.accommodateGuestInRoom(guest2, room);
+        manager.accommodateGuestInRoom(guest3, room);
+        
+        manager.removeGuestFromRoom(guest1, room);
+        List<Guest> guests = manager.getGuestsOfRoom(room);
+        assertEquals(2, guests.size());
+        
+        manager.removeGuestFromRoom(guest2, room);
+        guests = manager.getGuestsOfRoom(room);
+        assertEquals(1, guests.size());
+        
+        // removing removed guest:
+        try
+        {
+            manager.removeGuestFromRoom(guest1, room);
+            fail();
+        }
+        catch (Exception ex)
+        {
+            // OK
+        }
+        
+        // removing guest from wrong room
+        try
+        {
+            manager.removeGuestFromRoom(guest3, room2);
+            fail();
+        }
+        catch (Exception ex)
+        {
+            // OK
+        }
+        
+        // wrong arguments:
+        try
+        {
+            manager.removeGuestFromRoom(guest3, null);
+            fail();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // OK
+        }
+        
+        try
+        {
+            manager.removeGuestFromRoom(null, room);
+            fail();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // OK
+        }
+        
+        try
+        {
+            manager.removeGuestFromRoom(null, null);
+            fail();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // OK
+        }
+        
+        // checking the number of guest after wrong operatoins:
+        guests = manager.getGuestsOfRoom(room);
+        assertEquals(1, guests.size());
+    }
+    
+    
+    
     @Test
     public void getGuestsOfRoom() {
         Room room = newRoom(5, 1, 1, "A");
