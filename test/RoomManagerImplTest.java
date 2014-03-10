@@ -188,6 +188,13 @@ public class RoomManagerImplTest {
         } catch(IllegalArgumentException ex) {
             //Ok
         }
+        try {
+            room.setId(0L);
+            manager.deleteRoom(room);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //Ok
+        }
     }
     
     private Room newRoom(int capacity, int floor, int number, String note) {
