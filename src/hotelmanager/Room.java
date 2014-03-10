@@ -63,19 +63,19 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room{" + "id=" + id + '}';
+        return "Room{" + "id=" + id + ", capacity=" + capacity + ", floor=" + floor + ", number=" + number + "}";
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (!(obj instanceof Room)) {
             return false;
         }
         if (getClass() != obj.getClass()) {

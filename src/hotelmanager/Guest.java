@@ -63,19 +63,19 @@ public class Guest {
 
     @Override
     public String toString() {
-        return "Guest{" + "id=" + id + ", name=" + name + ", surname=" + surname + "}";
+        return "Guest{" + "id=" + id + ", name=" + name + ", surname=" + surname + ", identityCardNumber=" + identityCardNumber + ", gender=" + gender + "}";
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (!(obj instanceof Room)) {
             return false;
         }
         if (getClass() != obj.getClass()) {

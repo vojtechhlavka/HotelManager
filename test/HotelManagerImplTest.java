@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +42,7 @@ public class HotelManagerImplTest {
         roomM.createNewRoom(room);
         roomM.createNewRoom(room2);
         roomM.createNewRoom(room3);
-                
-        
+                        
             //AccommodateGuest to room
         manager.accommodateGuestInRoom(guest, room);
             

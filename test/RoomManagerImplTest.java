@@ -1,5 +1,6 @@
 import hotelmanager.Room;
 import hotelmanager.RoomManagerImpl;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -16,7 +17,7 @@ public class RoomManagerImplTest {
     public void setUp() {
         this.manager = new RoomManagerImpl();
     }
-    
+ 
     @Test
     public void createNewRoom() {
         Room room = newRoom(5, 1, 1, "Good room");
