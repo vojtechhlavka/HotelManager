@@ -47,7 +47,7 @@ public class HotelManagerImplTest {
         List<Room> free2 = manager.findAllFreeRooms();
             //test if free rooms before and after+1 are equal
         assertEquals(true, (free1.size() == free2.size()+1) );
-        //jeste otestovat zda kdyz vypisu inf tak tam bude dany guest
+            //jeste otestovat zda kdyz vypisu inf tak tam bude dany guest
     }
     
     @Test
@@ -78,6 +78,62 @@ public class HotelManagerImplTest {
             //OK
         }
 
+    }
+    
+    @Test
+    public void getGuestsOfRoom() {
+        Room room = newRoom(5, 1, 1, "A");
+        Guest guest = newGuest("Jan", "Obršálek", "12454977/4567", Gender.MALE);
+        Guest guest2 = newGuest("Jan", "Novotný", "78964977/7867", Gender.MALE);
+        Guest guest3 = newGuest("Petra", "Nováková", "12857987/4589", Gender.FEMALE);
+        guestM.createNewGuest(guest);
+        guestM.createNewGuest(guest2);
+        guestM.createNewGuest(guest3);
+        roomM.createNewRoom(room);
+        
+        Long roomId = room.getId();
+        room = roomM.getRoomById(roomId);
+        
+        manager.accommodateGuestInRoom(guest, room);
+        manager.accommodateGuestInRoom(guest2, room);
+        manager.accommodateGuestInRoom(guest3, room);
+        
+        List<Guest> result = manager.getGuestsOfRoom(room);
+        List<Guest> expected = Arrays.asList(guest, guest2, guest3);
+        assertEquals(expected, result);
+        assertDeepEqualsGuest(expected, result);        
+    }
+    
+    @Test
+    public void getGuestsOfRoomWrongAttribute() {
+        Room room = newRoom(5, 1, 1, "Fine");
+        roomM.createNewRoom(room);
+        Long roomId = room.getId();
+        
+        try {
+            manager.getGuestsOfRoom(null);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //OK
+        }
+        
+        try {
+            room = roomM.getRoomById(roomId);
+            room.setId(null);
+            manager.getGuestsOfRoom(room);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //OK
+        }
+        
+        try {
+            room = roomM.getRoomById(roomId);
+            room.setId(roomId-1);
+            manager.getGuestsOfRoom(room);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //OK
+        }
     }
     
     @Test
@@ -123,6 +179,14 @@ public class HotelManagerImplTest {
         return guest;   
     }
     
+    private void assertDeepEqualsGuest(Guest expected, Guest actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getSurname(), actual.getSurname());
+        assertEquals(expected.getIdentityCardNumber(), actual.getIdentityCardNumber());
+        assertEquals(expected.getGender(), actual.getGender());
+    }
+    
     private void assertDeepEquals(Room expected, Room actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getCapacity(), actual.getCapacity());
@@ -131,11 +195,19 @@ public class HotelManagerImplTest {
         assertEquals(expected.getNote(), actual.getNote());
     }
     
-     private void assertDeepEquals(List<Room> expectedList, List<Room> actualList) {
+    private void assertDeepEquals(List<Room> expectedList, List<Room> actualList) {
         for (int i = 0; i < expectedList.size(); i++) {
             Room expected = expectedList.get(i);
             Room actual = actualList.get(i);
             assertDeepEquals(expected, actual);
+        }
+    }
+    
+    private void assertDeepEqualsGuest(List<Guest> expectedList, List<Guest> actualList) {
+        for (int i = 0; i < expectedList.size(); i++) {
+            Guest expected = expectedList.get(i);
+            Guest actual = actualList.get(i);
+            assertDeepEqualsGuest(expected, actual);
         }
     }
      
