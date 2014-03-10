@@ -23,10 +23,10 @@ public interface HotelManager {
 	public void removeGuestFromRoom(Guest guest, Room room);
 
 	/**
-	 * Shows number of room, floor, capacity and guests accomodated in given room.
+	 * Give List of all guests from room
 	 * @param room given room
 	 */
-	public void showInformationAboutRoom(Room room);
+	public List<Guest> getGuestsOfRoom(Room room);
         
         /**
          * Finds and returns all free rooms in hotel.

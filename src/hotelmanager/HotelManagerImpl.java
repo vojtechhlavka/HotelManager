@@ -17,7 +17,7 @@ public class HotelManagerImpl implements HotelManager {
 	}
 
         @Override
-	public void showInformationAboutRoom(Room room)
+	public List<Guest> getGuestsOfRoom(Room room)
         {
             throw new UnsupportedOperationException("Not supported yet.");
 	}
