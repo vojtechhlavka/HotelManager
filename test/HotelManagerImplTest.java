@@ -183,6 +183,8 @@ public class HotelManagerImplTest {
         
         List<Guest> result = manager.getGuestsOfRoom(room);
         List<Guest> expected = Arrays.asList(guest, guest2, guest3);
+        Collections.sort(result, idComparatorGuest);
+        Collections.sort(expected, idComparatorGuest);
         assertEquals(expected, result);
         assertDeepEqualsGuest(expected, result);        
     }
@@ -238,8 +240,8 @@ public class HotelManagerImplTest {
         List<Room> result = manager.findAllFreeRooms();
             //Testing
         List<Room> expected = Arrays.asList(room2, room3);
-        Collections.sort(result, idComparator);
-        Collections.sort(expected, idComparator);
+        Collections.sort(result, idComparatorRoom);
+        Collections.sort(expected, idComparatorRoom);
         assertEquals(expected, result);
         assertDeepEquals(expected, result);        
     }
@@ -294,10 +296,19 @@ public class HotelManagerImplTest {
         }
     }
      
-    private static Comparator<Room> idComparator = new Comparator<Room>() {
+    private static Comparator<Room> idComparatorRoom = new Comparator<Room>() {
 
         @Override
         public int compare(Room o1, Room o2) {
+            return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
+        }
+        
+    };
+    
+    private static Comparator<Guest> idComparatorGuest = new Comparator<Guest>() {
+
+        @Override
+        public int compare(Guest o1, Guest o2) {
             return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
         }
         
