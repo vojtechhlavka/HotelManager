@@ -32,11 +32,60 @@ public class HotelManagerImplTest {
     }
   
     @Test
+    public void accommodateGuestInRoom() {
+        Room room = newRoom(5, 1, 1, "B");
+        Room room2 = newRoom(5, 1, 2, "B");
+        Guest guest = newGuest("Lukáš", "Novák", "4569746/6447", Gender.FEMALE);
+        guestM.createNewGuest(guest);
+        roomM.createNewRoom(room);
+        roomM.createNewRoom(room2);
+        
+        List<Room> free1 = manager.findAllFreeRooms();
+        
+        manager.accommodateGuestInRoom(guest, room);
+        
+        List<Room> free2 = manager.findAllFreeRooms();
+            //test if free rooms before and after+1 are equal
+        assertEquals(true, (free1.size() == free2.size()+1) );
+        //jeste otestovat zda kdyz vypisu inf tak tam bude dany guest
+    }
+    
+    @Test
+    public void accommodateGuestInRoomWithWrongAttribute() {
+        Room room = newRoom(5, 1, 1, "B");
+        Guest guest = newGuest("Lukáš", "Novák", "4569746/6447", Gender.FEMALE);
+        guestM.createNewGuest(guest);
+        roomM.createNewRoom(room);      
+
+        try {
+            manager.accommodateGuestInRoom(null, room);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //OK
+        }
+        
+        try {
+            manager.accommodateGuestInRoom(guest, null);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //OK
+        }
+        
+        try {
+            manager.accommodateGuestInRoom(null, null);
+            fail();
+        } catch(IllegalArgumentException ex) {
+            //OK
+        }
+
+    }
+    
+    @Test
     public void findAllFreeRooms() {
             //Creating
         Room room = newRoom(5, 1, 1, "A");
-        Room room2 = newRoom(5, 1, 1, "A");
-        Room room3 = newRoom(5, 1, 1, "A");
+        Room room2 = newRoom(5, 1, 2, "A");
+        Room room3 = newRoom(5, 1, 3, "A");
         Guest guest = newGuest("Jan", "Obršálek", "12454977/4567", Gender.MALE);
         guestM.createNewGuest(guest);
         roomM.createNewRoom(room);
