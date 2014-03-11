@@ -3,7 +3,8 @@ package hotelmanager;
 import java.util.Comparator;
 
 /**
- *
+ * Comparator to Guest compare by Id
+ * 
  * @author Petr
  */
 public class GuestComparator implements Comparator<Guest> {

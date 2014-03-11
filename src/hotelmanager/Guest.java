@@ -3,7 +3,9 @@ package hotelmanager;
 import java.util.Objects;
 
 /**
- * Entity of Guest
+ * This entity class represents Guest. Guest has name, surname,
+ * identityCardNumber. Guest could be accommodate in Room
+ *
  * @author Petr Domkar & Vojtech Hlavka
  */
 public class Guest {
@@ -17,8 +19,7 @@ public class Guest {
     /**
      * Constructor of entity Guest with no parameters.
      */
-    public Guest()
-    {
+    public Guest() {
     }
 
     public Long getId() {
@@ -86,5 +87,5 @@ public class Guest {
             return false;
         }
         return true;
-    }        
+    }
 }

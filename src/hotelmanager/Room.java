@@ -3,7 +3,10 @@ package hotelmanager;
 import java.util.Objects;
 
 /**
- * Entity of room
+ * This entity class represents Room. Room has capacity, number of floor, number
+ * on floor and some note. One Room could contain zero or more Guest. But
+ * maximum acommodate guest must be lower than capacity.
+ *
  * @author Petr Domkar & Vojtech Hlavka
  */
 public class Room {
@@ -17,8 +20,7 @@ public class Room {
     /**
      * Constructor of entity room with no parameters.
      */
-    public Room()
-    {
+    public Room() {
     }
 
     public Long getId() {
@@ -52,7 +54,7 @@ public class Room {
     public void setNumber(int number) {
         this.number = number;
     }
-    
+
     public String getNote() {
         return note;
     }
@@ -86,6 +88,5 @@ public class Room {
             return false;
         }
         return true;
-    }        
-    
+    }
 }
