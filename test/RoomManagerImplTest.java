@@ -1,5 +1,11 @@
 import hotelmanager.Room;
+import hotelmanager.RoomComparator;
 import hotelmanager.RoomManagerImpl;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -197,6 +203,44 @@ public class RoomManagerImplTest {
         }
     }
     
+    @Test
+    public void findAllRooms() {
+        assertTrue(manager.findAllRooms().isEmpty());
+        
+        Room r1 = newRoom(5, 1, 1, "Great");
+        Room r2 = newRoom(4, 1, 2, "Great.");
+        Room r3 = newRoom(5, 1, 3, "Great");
+        manager.createNewRoom(r1);
+        manager.createNewRoom(r2);
+        manager.createNewRoom(r3);
+        
+        List<Room> result = manager.findAllRooms();
+        List<Room> expected = Arrays.asList(r1, r2, r3);
+        Collections.sort(result, new RoomComparator());
+        Collections.sort(expected, new RoomComparator());
+        assertEquals(expected, result);
+        assertDeepEquals(expected, result);
+    }
+    
+    @Test
+    public void getRoomByIdTest() {        
+        assertNull(manager.getRoomById(1l));
+        
+        Room r1 = newRoom(5, 1, 1, "Great");
+        Room r2 = newRoom(4, 1, 2, "Great.");
+        Room r3 = newRoom(5, 1, 3, "Great");
+        manager.createNewRoom(r1);
+        manager.createNewRoom(r2);
+        manager.createNewRoom(r3);
+        
+        Long roomId = r2.getId();
+        
+        Room result = manager.getRoomById(roomId);
+        
+        assertEquals(r3, result);
+        assertDeepEquals(r3, result); 
+    }
+    
     private Room newRoom(int capacity, int floor, int number, String note) {
         Room room = new Room();
         room.setCapacity(capacity);
@@ -212,5 +256,13 @@ public class RoomManagerImplTest {
         assertEquals(expected.getFloor(), actual.getFloor());
         assertEquals(expected.getNumber(), actual.getNumber());
         assertEquals(expected.getNote(), actual.getNote());
+    }
+    
+    private void assertDeepEquals(List<Room> expectedList, List<Room> actualList) {
+        for (int i = 0; i < expectedList.size(); i++) {
+            Room expected = expectedList.get(i);
+            Room actual = actualList.get(i);
+            assertDeepEquals(expected, actual);
+        }
     }
 }

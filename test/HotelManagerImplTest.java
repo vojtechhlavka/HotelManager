@@ -1,8 +1,10 @@
 import hotelmanager.Gender;
 import hotelmanager.Guest;
+import hotelmanager.GuestComparator;
 import hotelmanager.GuestManagerImpl;
 import hotelmanager.HotelManagerImpl;
 import hotelmanager.Room;
+import hotelmanager.RoomComparator;
 import hotelmanager.RoomManagerImpl;
 import java.util.Arrays;
 import java.util.Collections;
@@ -78,8 +80,7 @@ public class HotelManagerImplTest {
             //OK
         }
 
-    }
-    
+    }    
     
     
     @Test
@@ -159,8 +160,7 @@ public class HotelManagerImplTest {
         // checking the number of guest after wrong operatoins:
         guests = manager.getGuestsOfRoom(room);
         assertEquals(1, guests.size());
-    }
-    
+    }    
     
     
     @Test
@@ -183,8 +183,8 @@ public class HotelManagerImplTest {
         
         List<Guest> result = manager.getGuestsOfRoom(room);
         List<Guest> expected = Arrays.asList(guest, guest2, guest3);
-        Collections.sort(result, idComparatorGuest);
-        Collections.sort(expected, idComparatorGuest);
+        Collections.sort(result, new GuestComparator());
+        Collections.sort(expected, new GuestComparator());
         assertEquals(expected, result);
         assertDeepEqualsGuest(expected, result);        
     }
@@ -240,8 +240,8 @@ public class HotelManagerImplTest {
         List<Room> result = manager.findAllFreeRooms();
             //Testing
         List<Room> expected = Arrays.asList(room2, room3);
-        Collections.sort(result, idComparatorRoom);
-        Collections.sort(expected, idComparatorRoom);
+        Collections.sort(result, new RoomComparator());
+        Collections.sort(expected, new RoomComparator());
         assertEquals(expected, result);
         assertDeepEquals(expected, result);        
     }
@@ -296,21 +296,4 @@ public class HotelManagerImplTest {
         }
     }
      
-    private static Comparator<Room> idComparatorRoom = new Comparator<Room>() {
-
-        @Override
-        public int compare(Room o1, Room o2) {
-            return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
-        }
-        
-    };
-    
-    private static Comparator<Guest> idComparatorGuest = new Comparator<Guest>() {
-
-        @Override
-        public int compare(Guest o1, Guest o2) {
-            return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
-        }
-        
-    };
 }

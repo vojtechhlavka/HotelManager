@@ -1,0 +1,14 @@
+package hotelmanager;
+
+import java.util.Comparator;
+
+/**
+ *
+ * @author Petr
+ */
+public class RoomComparator implements Comparator<Room> {
+    @Override
+    public int compare(Room o1, Room o2) {
+        return Long.valueOf(o1.getId()).compareTo(Long.valueOf(o2.getId()));
+    }
+}
