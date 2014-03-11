@@ -3,39 +3,53 @@ package hotelmanager;
 import java.util.List;
 
 /**
- * Manager of entity Guest
+ * This service allows to manipulate with Guests.
+ * 
  * @author Petr Domkar & Vojtech Hlavka
  */
 public interface GuestManager {
 
 	/**
-	 * Creates new guest.
-	 * @param guest given guest
+	 * Store Guest to DB.
+         * Id for new Guest is automatically generate and add to obect Guest
+	 * 
+         * @param guest guest to be created
+         * @throws IllegalArgumentException when body is null
+         * @throws  ServiceFailureException when db operation fails.
 	 */
 	public void createNewGuest(Guest guest);
 
 	/**
-	 * Updates information about given guest.
-	 * @param guest given guest
+	 * Updates information about guest in database
+         * 
+	 * @param guest guest to be updated in database
+         * @throws IllegalArgumentException when body or id of body is null
+         * @throws ServiceFailureException when db operation fails.
 	 */
 	public void updateGuest(Guest guest);
 
 	/**
-	 * Deletes given guest.
-	 * @param guest given guest
+	 * Deletes guest from database
+         * 
+	 * @param guest guest which would be deleted from database
+         * @throws IllegalArgumentException  when body or id of body is null
+         * @throws ServiceFailureException when db operation fails.
 	 */
 	public void deleteGuest(Guest guest);
         
         /**
-         * Finds and returns all guests.
+         * Return List of all Guests in hotel(database)
+         * 
          * @return list of all guests.
+         * @throws ServiceFailureException when db operation fails.
          */
 	public List<Guest> findAllGuests();
 
 	/**
-	 * Returns guets with given ID
-	 * @param id given ID
-         * @return guest with given ID
+	 * Returns guest by id
+         * 
+         * @param id primary key of finded guest
+         * @return guest with given id or null if such guest was not find
 	 */
 	public Guest getGuestById(Long id);
 }
