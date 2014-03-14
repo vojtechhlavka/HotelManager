@@ -1,3 +1,5 @@
+package hotelmanagertests;
+
 import hotelmanager.Room;
 import hotelmanager.RoomComparator;
 import hotelmanager.RoomManagerImpl;
@@ -306,7 +308,7 @@ public class RoomManagerImplTest {
         Collections.sort(result, new RoomComparator());
         Collections.sort(expected, new RoomComparator());
         assertEquals(expected, result);
-        assertDeepEqualsRoom(expected, result);
+        assertDeepEqualsCollectionRoom(expected, result);
     }
 
     @Test
@@ -341,7 +343,7 @@ public class RoomManagerImplTest {
         manager.getRoomById(-1L);
     }
 
-    private Room newRoom(int capacity, int floor, int number, String note) {
+    static Room newRoom(int capacity, int floor, int number, String note) {
         Room room = new Room();
         room.setCapacity(capacity);
         room.setFloor(floor);
@@ -350,7 +352,7 @@ public class RoomManagerImplTest {
         return room;
     }
 
-    private void assertDeepEqualsRoom(Room expected, Room actual) {
+    static void assertDeepEqualsRoom(Room expected, Room actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getCapacity(), actual.getCapacity());
         assertEquals(expected.getFloor(), actual.getFloor());
@@ -358,7 +360,8 @@ public class RoomManagerImplTest {
         assertEquals(expected.getNote(), actual.getNote());
     }
 
-    private void assertDeepEqualsRoom(List<Room> expectedList, List<Room> actualList) {
+    static void assertDeepEqualsCollectionRoom(List<Room> expectedList, List<Room> actualList) {
+        assertEquals(expectedList.size(), actualList.size());
         for (int i = 0; i < expectedList.size(); i++) {
             Room expected = expectedList.get(i);
             Room actual = actualList.get(i);

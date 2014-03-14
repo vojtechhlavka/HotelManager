@@ -1,3 +1,4 @@
+package hotelmanagertests;
 
 import hotelmanager.Gender;
 import hotelmanager.Guest;
@@ -7,6 +8,12 @@ import hotelmanager.HotelManagerImpl;
 import hotelmanager.Room;
 import hotelmanager.RoomComparator;
 import hotelmanager.RoomManagerImpl;
+import static hotelmanagertests.RoomManagerImplTest.assertDeepEqualsRoom;
+import static hotelmanagertests.RoomManagerImplTest.assertDeepEqualsCollectionRoom;
+import static hotelmanagertests.RoomManagerImplTest.newRoom;
+import static hotelmanagertests.GuestManagerImplTest.assertDeepEqualsGuest;
+import static hotelmanagertests.GuestManagerImplTest.assertDeepEqualsCollectionGuest;
+import static hotelmanagertests.GuestManagerImplTest.newGuest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,22 +23,35 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * This class testing all method in HotelManagerImpl
  *
  * @author Petr
  */
 public class HotelManagerImplTest {
-
     private HotelManagerImpl manager;
     private RoomManagerImpl roomM;
     private GuestManagerImpl guestM;
+    private Room r1, r2, r3;
+    private Guest g1, g2, g3, g4, g5;
 
     @Before
     public void setUp() {
         this.manager = new HotelManagerImpl();
         this.roomM = new RoomManagerImpl();
         this.guestM = new GuestManagerImpl();
+        
+        r1 = newRoom(5, 1, 1, "Nice room.");
+        r2 = newRoom(3, 1, 2, "Great room with good smelt.");
+        r3 = newRoom(4, 1, 3, "Bad room.");
+        g1 = newGuest("Jaroslav", "Šlechtický", "123456789", Gender.MALE);
+        g2 = newGuest("Klára", "Malinká", "453456789", Gender.FEMALE);
+        g3 = newGuest("Václav", "Veliká", "123456789", Gender.MALE);
+        g4 = newGuest("Petr", "Nedržbach", "345456789", Gender.MALE);
+        g5 = newGuest("Jana", "Horšová", "456789789", Gender.FEMALE);
     }
 
+    
+    
     @Test
     public void accommodateGuestInRoom() {
         Room room = newRoom(5, 1, 1, "B");
@@ -167,7 +187,7 @@ public class HotelManagerImplTest {
         Collections.sort(result, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
         assertEquals(expected, result);
-        assertDeepEqualsGuest(expected, result);
+        assertDeepEqualsCollectionGuest(expected, result);
     }
 
     @Test
@@ -204,76 +224,34 @@ public class HotelManagerImplTest {
 
     @Test
     public void findAllFreeRooms() {
-        //Creating
-        Room room = newRoom(5, 1, 1, "A");
-        Room room2 = newRoom(5, 1, 2, "A");
-        Room room3 = newRoom(5, 1, 3, "A");
-        Guest guest = newGuest("Jan", "Obršálek", "12454977/4567", Gender.MALE);
-        guestM.createNewGuest(guest);
-        roomM.createNewRoom(room);
-        roomM.createNewRoom(room2);
-        roomM.createNewRoom(room3);
+        guestM.createNewGuest(g1);
+        guestM.createNewGuest(g2);
+        guestM.createNewGuest(g3);
+        guestM.createNewGuest(g4);
+        guestM.createNewGuest(g5);
+        roomM.createNewRoom(r1);
+        roomM.createNewRoom(r2);
+        roomM.createNewRoom(r3);
 
-        //AccommodateGuest to room
-        manager.accommodateGuestInRoom(guest, room);
-
-        //Find All free rooms
+            //When rooms are all free
         List<Room> result = manager.findAllFreeRooms();
-        //Testing
-        List<Room> expected = Arrays.asList(room2, room3);
+        List<Room> expected = Arrays.asList(r1, r2, r3);
         Collections.sort(result, new RoomComparator());
         Collections.sort(expected, new RoomComparator());
         assertEquals(expected, result);
-        assertDeepEquals(expected, result);
-    }
-
-    private Room newRoom(int capacity, int floor, int number, String note) {
-        Room room = new Room();
-        room.setCapacity(capacity);
-        room.setFloor(floor);
-        room.setNumber(number);
-        room.setNote(note);
-        return room;
-    }
-
-    private Guest newGuest(String name, String surname, String identityCardNumber, Gender gender) {
-        Guest guest = new Guest();
-        guest.setName(name);
-        guest.setSurname(surname);
-        guest.setIdentityCardNumber(identityCardNumber);
-        guest.setGender(gender);
-        return guest;
-    }
-
-    private void assertDeepEqualsGuest(Guest expected, Guest actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getSurname(), actual.getSurname());
-        assertEquals(expected.getIdentityCardNumber(), actual.getIdentityCardNumber());
-        assertEquals(expected.getGender(), actual.getGender());
-    }
-
-    private void assertDeepEquals(Room expected, Room actual) {
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getCapacity(), actual.getCapacity());
-        assertEquals(expected.getFloor(), actual.getFloor());
-        assertEquals(expected.getNumber(), actual.getNumber());
-        assertEquals(expected.getNote(), actual.getNote());
-    }
-
-    private void assertDeepEquals(List<Room> expectedList, List<Room> actualList) {
-        for (int i = 0; i < expectedList.size(); i++) {
-            Room expected = expectedList.get(i);
-            Room actual = actualList.get(i);
-            assertDeepEquals(expected, actual);
-        }
-    }
-
-    private void assertDeepEqualsGuest(List<Guest> expectedList, List<Guest> actualList) {
-        for (int i = 0; i < expectedList.size(); i++) {
-            Guest expected = expectedList.get(i);
-            Guest actual = actualList.get(i);
-            assertDeepEqualsGuest(expected, actual);
-        }
+        assertDeepEqualsCollectionRoom(expected, result);
+        
+        manager.accommodateGuestInRoom(g1, r2);
+        manager.accommodateGuestInRoom(g3, r2);
+        manager.accommodateGuestInRoom(g4, r2);
+        manager.accommodateGuestInRoom(g5, r1);
+        
+            //When we accommodate some Guest to room
+        result = manager.findAllFreeRooms();
+        expected = Arrays.asList(r1, r3);
+        Collections.sort(result, new RoomComparator());
+        Collections.sort(expected, new RoomComparator());
+        assertEquals(expected, result);
+        assertDeepEqualsCollectionRoom(expected, result);
     }
 }

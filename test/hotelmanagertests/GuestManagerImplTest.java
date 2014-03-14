@@ -1,3 +1,5 @@
+package hotelmanagertests;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -333,7 +335,7 @@ public class GuestManagerImplTest {
         Collections.sort(result, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
         assertEquals(expected, result);
-        assertDeepEquals(expected, result);
+        assertDeepEqualsCollectionGuest(expected, result);
     }
 
     @Test
@@ -356,7 +358,7 @@ public class GuestManagerImplTest {
         }
     }
 
-    private static Guest newGuest(String name, String surname, String identityCardNumber, Gender gender) {
+    static Guest newGuest(String name, String surname, String identityCardNumber, Gender gender) {
         Guest guest = new Guest();
         guest.setName(name);
         guest.setSurname(surname);
@@ -365,15 +367,16 @@ public class GuestManagerImplTest {
         return guest;
     }
 
-    private void assertDeepEquals(List<Guest> expectedList, List<Guest> actualList) {
+    static void assertDeepEqualsCollectionGuest(List<Guest> expectedList, List<Guest> actualList) {
+        assertEquals(expectedList.size(), actualList.size());
         for (int i = 0; i < expectedList.size(); i++) {
             Guest expected = expectedList.get(i);
             Guest actual = actualList.get(i);
-            assertDeepEquals(expected, actual);
+            assertDeepEqualsGuest(expected, actual);
         }
     }
 
-    private void assertDeepEquals(Guest expected, Guest actual) {
+    static void assertDeepEqualsGuest(Guest expected, Guest actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getSurname(), actual.getSurname());
