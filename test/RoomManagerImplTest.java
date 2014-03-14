@@ -14,14 +14,13 @@ import static org.junit.Assert.*;
  * 
  *  Ask: RoomComparator a GuestComparator do extra třídy? protože ho používám víckrát? když bych chtěl pak vytvořit složitejsi
  * comparator tak misto dedicnost pouzit kompozici? s vytvoreim instance toho jinyho comparatoru
+ *      : Nemelo by se po provedeni testu mazat dtb?
  * 
  * @author Petr
  */
 public class RoomManagerImplTest {
     private RoomManagerImpl manager;
-    private Room r1;
-    private Room r2;
-    private Room r3;
+    private Room r1, r2, r3;
 
     @Before
     public void setUp() {
