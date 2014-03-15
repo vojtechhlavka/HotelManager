@@ -173,6 +173,7 @@ public class HotelManagerImplTest {
         assertEquals(1, guests.size());
     }
 
+    
     @Test
     public void getGuestsOfRoom() {
         assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
@@ -205,38 +206,25 @@ public class HotelManagerImplTest {
         assertDeepEqualsCollectionGuest(expected2, result2);
     }
 
-    @Test
-    public void getGuestsOfRoomWrongAttribute() {
-        Room room = newRoom(5, 1, 1, "Fine");
-        roomM.createNewRoom(room);
-        Long roomId = room.getId();
-
-        try {
-            manager.getGuestsOfRoom(null);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        try {
-            room = roomM.getRoomById(roomId);
-            room.setId(null);
-            manager.getGuestsOfRoom(room);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        try {
-            room = roomM.getRoomById(roomId);
-            room.setId(roomId - 1);
-            manager.getGuestsOfRoom(room);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void getGuestsOfRoomWithNull() {
+        manager.getGuestsOfRoom(null);
     }
-
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void getGuestsOfRoomWithNullId() {
+        r1.setId(null);
+        manager.getGuestsOfRoom(r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void getGuestsOfRoomWithWrongId() {
+        r1.setId(0L);
+        manager.getGuestsOfRoom(r1);
+        r1.setId(-1L);
+        manager.getGuestsOfRoom(r1);
+    }
+    
     @Test
     public void findAllFreeRooms() {
 
