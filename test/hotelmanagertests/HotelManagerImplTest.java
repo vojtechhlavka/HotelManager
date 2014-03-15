@@ -63,53 +63,35 @@ public class HotelManagerImplTest {
     
     @Test
     public void accommodateGuestInRoom() {
-        Room room = newRoom(5, 1, 1, "B");
-        Room room2 = newRoom(5, 1, 2, "B");
-        Guest guest = newGuest("Lukáš", "Novák", "4569746/6447", Gender.FEMALE);
-        guestM.createNewGuest(guest);
-        roomM.createNewRoom(room);
-        roomM.createNewRoom(room2);
-
+        assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
+            //test if free rooms before and after+1 are equal
         List<Room> free1 = manager.findAllFreeRooms();
-
-        manager.accommodateGuestInRoom(guest, room);
-
-        List<Room> free2 = manager.findAllFreeRooms();
-        //test if free rooms before and after+1 are equal
+        
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        
+        List<Room> free2 = manager.findAllFreeRooms();        
         assertEquals(true, (free1.size() == free2.size() + 1));
-        //jeste otestovat zda kdyz vypisu inf tak tam bude dany guest
+        
+            //jeste otestovat zda kdyz vypisu inf tak tam bude dany guest
+        List<Guest> guestsOfR1 = manager.getGuestsOfRoom(r1);
+        List<Guest> expected = Arrays.asList(g1, g2);
+        
+        Collections.sort(guestsOfR1, new GuestComparator());
+        Collections.sort(expected, new GuestComparator());
+        assertEquals(expected, guestsOfR1);
+        assertDeepEqualsCollectionGuest(expected, guestsOfR1);
     }
 
-    @Test
-    public void accommodateGuestInRoomWithWrongAttribute() {
-        Room room = newRoom(5, 1, 1, "B");
-        Guest guest = newGuest("Lukáš", "Novák", "4569746/6447", Gender.FEMALE);
-        guestM.createNewGuest(guest);
-        roomM.createNewRoom(room);
-
-        try {
-            manager.accommodateGuestInRoom(null, room);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        try {
-            manager.accommodateGuestInRoom(guest, null);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
-        try {
-            manager.accommodateGuestInRoom(null, null);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            //OK
-        }
-
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithNull() {
+        manager.accommodateGuestInRoom(null, r1);
+        manager.accommodateGuestInRoom(g1, null);
+        manager.accommodateGuestInRoom(null, null);
     }
-
+    
+    
+    
     @Test
     public void removeGuestFromRoomTest() {
         Room room = newRoom(4, 1, 1, "Poznámka");
