@@ -48,6 +48,15 @@ public class HotelManagerImplTest {
         g3 = newGuest("Václav", "Veliká", "123456789", Gender.MALE);
         g4 = newGuest("Petr", "Nedržbach", "345456789", Gender.MALE);
         g5 = newGuest("Jana", "Horšová", "456789789", Gender.FEMALE);
+        
+        guestM.createNewGuest(g1);
+        guestM.createNewGuest(g2);
+        guestM.createNewGuest(g3);
+        guestM.createNewGuest(g4);
+        guestM.createNewGuest(g5);
+        roomM.createNewRoom(r1);
+        roomM.createNewRoom(r2);
+        roomM.createNewRoom(r3);
     }
 
     
@@ -166,28 +175,34 @@ public class HotelManagerImplTest {
 
     @Test
     public void getGuestsOfRoom() {
-        Room room = newRoom(5, 1, 1, "A");
-        Guest guest = newGuest("Jan", "Obršálek", "12454977/4567", Gender.MALE);
-        Guest guest2 = newGuest("Jan", "Novotný", "78964977/7867", Gender.MALE);
-        Guest guest3 = newGuest("Petra", "Nováková", "12857987/4589", Gender.FEMALE);
-        guestM.createNewGuest(guest);
-        guestM.createNewGuest(guest2);
-        guestM.createNewGuest(guest3);
-        roomM.createNewRoom(room);
+        assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
+        assertTrue(manager.getGuestsOfRoom(r2).isEmpty());
+        assertTrue(manager.getGuestsOfRoom(r3).isEmpty());
 
-        Long roomId = room.getId();
-        room = roomM.getRoomById(roomId);
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        manager.accommodateGuestInRoom(g4, r3);
+        
+        assertFalse(manager.getGuestsOfRoom(r1).isEmpty());
+        assertTrue(manager.getGuestsOfRoom(r2).isEmpty());
+        assertFalse(manager.getGuestsOfRoom(r3).isEmpty());
 
-        manager.accommodateGuestInRoom(guest, room);
-        manager.accommodateGuestInRoom(guest2, room);
-        manager.accommodateGuestInRoom(guest3, room);
-
-        List<Guest> result = manager.getGuestsOfRoom(room);
-        List<Guest> expected = Arrays.asList(guest, guest2, guest3);
-        Collections.sort(result, new GuestComparator());
-        Collections.sort(expected, new GuestComparator());
-        assertEquals(expected, result);
-        assertDeepEqualsCollectionGuest(expected, result);
+        List<Guest> result1 = manager.getGuestsOfRoom(r1);
+        List<Guest> expected1 = Arrays.asList(g1, g2, g3);
+        
+        List<Guest> result2 = manager.getGuestsOfRoom(r3);
+        List<Guest> expected2 = Arrays.asList(g4);
+        
+        Collections.sort(result1, new GuestComparator());
+        Collections.sort(expected1, new GuestComparator());
+        assertEquals(expected1, result1);
+        assertDeepEqualsCollectionGuest(expected1, result1);
+        
+        Collections.sort(result2, new GuestComparator());
+        Collections.sort(expected2, new GuestComparator());
+        assertEquals(expected2, result2);
+        assertDeepEqualsCollectionGuest(expected2, result2);
     }
 
     @Test
@@ -224,14 +239,6 @@ public class HotelManagerImplTest {
 
     @Test
     public void findAllFreeRooms() {
-        guestM.createNewGuest(g1);
-        guestM.createNewGuest(g2);
-        guestM.createNewGuest(g3);
-        guestM.createNewGuest(g4);
-        guestM.createNewGuest(g5);
-        roomM.createNewRoom(r1);
-        roomM.createNewRoom(r2);
-        roomM.createNewRoom(r3);
 
             //When rooms are all free
         List<Room> result = manager.findAllFreeRooms();
