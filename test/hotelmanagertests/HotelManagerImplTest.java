@@ -73,7 +73,7 @@ public class HotelManagerImplTest {
         List<Room> free2 = manager.findAllFreeRooms();        
         assertEquals(true, (free1.size() == free2.size() + 1));
         
-            //jeste otestovat zda kdyz vypisu inf tak tam bude dany guest
+            //Test Equals to Coolection, get and made
         List<Guest> guestsOfR1 = manager.getGuestsOfRoom(r1);
         List<Guest> expected = Arrays.asList(g1, g2);
         
@@ -89,6 +89,52 @@ public class HotelManagerImplTest {
         manager.accommodateGuestInRoom(g1, null);
         manager.accommodateGuestInRoom(null, null);
     }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithNulId() {
+        Long roomId = r1.getId();
+        r1.setId(null);
+        manager.accommodateGuestInRoom(g1, r1);
+        g1.setId(null);
+        manager.accommodateGuestInRoom(g1, r1);
+        r1.setId(roomId);
+        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongId() {
+        Long roomId = r1.getId();
+        Long guestId = g1.getId();
+        r1.setId(0L);
+        g1.setId(0L);
+        manager.accommodateGuestInRoom(g1, r1);
+        r1.setId(0L);
+        g1.setId(-1L);
+        manager.accommodateGuestInRoom(g1, r1);
+        r1.setId(-1L);
+        g1.setId(0L);
+        manager.accommodateGuestInRoom(g1, r1);
+        r1.setId(-1L);
+        g1.setId(-1L);
+        manager.accommodateGuestInRoom(g1, r1);
+        g1.setId(guestId);
+        manager.accommodateGuestInRoom(g1, r1);
+        r1.setId(0L);
+        manager.accommodateGuestInRoom(g1, r1);
+        r1.setId(roomId);
+        g1.setId(0L);
+        manager.accommodateGuestInRoom(g1, r1);
+        g1.setId(-1L);
+        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomOverfull() {
+        manager.accommodateGuestInRoom(g1, r2);
+        manager.accommodateGuestInRoom(g2, r2);
+        manager.accommodateGuestInRoom(g3, r2);
+        manager.accommodateGuestInRoom(g4, r2); //throw excpeiton
+    }    
     
     
     
@@ -156,6 +202,8 @@ public class HotelManagerImplTest {
     }
 
     
+    
+    
     @Test
     public void getGuestsOfRoom() {
         assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
@@ -209,7 +257,6 @@ public class HotelManagerImplTest {
     
     @Test
     public void findAllFreeRooms() {
-
             //When rooms are all free
         List<Room> result = manager.findAllFreeRooms();
         List<Room> expected = Arrays.asList(r1, r2, r3);
