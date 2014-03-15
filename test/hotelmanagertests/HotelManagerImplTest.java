@@ -34,6 +34,11 @@ public class HotelManagerImplTest {
     private Room r1, r2, r3;
     private Guest g1, g2, g3, g4, g5;
 
+    /**
+     * Method to Inicializate before each Test
+     * 
+     * @author Petr
+     */
     @Before
     public void setUp() {
         this.manager = new HotelManagerImpl();
@@ -60,7 +65,12 @@ public class HotelManagerImplTest {
     }
 
     
-    
+    /**
+     * Testing accomodateGuestInRoom
+     * AccomodateGuestInRoom method must accomodat sou getFreeRooms must return less room, and method getGuestOfRoom must return all guests in room
+     * 
+     * @author Petr
+     */
     @Test
     public void accommodateGuestInRoom() {
         assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
@@ -83,6 +93,11 @@ public class HotelManagerImplTest {
         assertDeepEqualsCollectionGuest(expected, guestsOfR1);
     }
 
+    /**
+     * Testing accomodateGuestInRoom with null
+     * 
+     * @author Petr
+     */
     @Test(expected = IllegalArgumentException.class)
     public void accommodateGuestInRoomWithNull() {
         manager.accommodateGuestInRoom(null, r1);
@@ -90,6 +105,11 @@ public class HotelManagerImplTest {
         manager.accommodateGuestInRoom(null, null);
     }
     
+    /**
+     * Testing accomodateGuestInRoom with null
+     * 
+     * @author Petr
+     */
     @Test(expected = IllegalArgumentException.class)
     public void accommodateGuestInRoomWithNulId() {
         Long roomId = r1.getId();
@@ -101,6 +121,12 @@ public class HotelManagerImplTest {
         manager.accommodateGuestInRoom(g1, r1);
     }
     
+    /**
+     * Testing accomodateGuestInRoom with WrongId
+     * nule or negative
+     * 
+     * @author Petr
+     */
     @Test(expected = IllegalArgumentException.class)
     public void accommodateGuestInRoomWithWrongId() {
         Long roomId = r1.getId();
@@ -128,6 +154,12 @@ public class HotelManagerImplTest {
         manager.accommodateGuestInRoom(g1, r1);
     }
     
+    /**
+     * Testing accomodateGuestInRoom Overfull
+     * If we accomodate more guests than is capacity -> throw IllegalArgumentException
+     * 
+     * @author Petr
+     */
     @Test(expected = IllegalArgumentException.class)
     public void accommodateGuestInRoomOverfull() {
         manager.accommodateGuestInRoom(g1, r2);
@@ -203,7 +235,11 @@ public class HotelManagerImplTest {
 
     
     
-    
+    /**
+     * Testing GetGuestOfRoom method
+     * 
+     * @author Petr
+     */
     @Test
     public void getGuestsOfRoom() {
         assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
@@ -236,17 +272,32 @@ public class HotelManagerImplTest {
         assertDeepEqualsCollectionGuest(expected2, result2);
     }
 
+    /**
+     * Testing GetGuestOfRoom method if is given null
+     * 
+     * @author Petr
+     */
     @Test(expected = IllegalArgumentException.class)
     public void getGuestsOfRoomWithNull() {
         manager.getGuestsOfRoom(null);
     }
     
+    /**
+     * Testing GetGuestOfRoom method if is given null Id
+     * 
+     * @author Petr
+     */
     @Test(expected = IllegalArgumentException.class)
     public void getGuestsOfRoomWithNullId() {
         r1.setId(null);
         manager.getGuestsOfRoom(r1);
     }
     
+    /**
+     * Testing GetGuestOfRoom method if is given wrong id
+     * 
+     * @author Petr
+     */
     @Test(expected = IllegalArgumentException.class)
     public void getGuestsOfRoomWithWrongId() {
         r1.setId(0L);
@@ -255,6 +306,11 @@ public class HotelManagerImplTest {
         manager.getGuestsOfRoom(r1);
     }
     
+    /**
+     * Testing finding free rooms
+     * 
+     * @author Petr
+     */
     @Test
     public void findAllFreeRooms() {
             //When rooms are all free
