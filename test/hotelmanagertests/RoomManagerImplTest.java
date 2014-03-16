@@ -13,11 +13,7 @@ import static org.junit.Assert.*;
 
 /**
  * This class testing all method in RoomManagerImpl
- * 
- *  Ask: RoomComparator a GuestComparator do extra třídy? protože ho používám víckrát? když bych chtěl pak vytvořit složitejsi
- * comparator tak misto dedicnost pouzit kompozici? s vytvoreim instance toho jinyho comparatoru
- *      : Nemelo by se po provedeni testu mazat dtb?
- * 
+
  * @author Petr
  */
 public class RoomManagerImplTest {
@@ -34,7 +30,7 @@ public class RoomManagerImplTest {
     }
 
     @Test
-    public void createNewRoom() {
+    public void createNewRoomTest() {
         manager.createNewRoom(r1);
 
         Long roomId = r1.getId();
@@ -48,22 +44,15 @@ public class RoomManagerImplTest {
     public void createNewRoomWithNull() {
         manager.createNewRoom(null);
     }
-          
+    
     @Test(expected = IllegalArgumentException.class)
-    public void createNewRoomWithWrongId() {
-            //it can not be setting id before createRoom - because it is done automacicly in DTB
-        r1.setId(1L);       
-        manager.createNewRoom(r1);
-        r1.setId(0L);       
-        manager.createNewRoom(r1);
-        r1.setId(-1L);       
+    public void createNewRoomWithWrongCapacityZero() {
+        r1.setCapacity(0);
         manager.createNewRoom(r1);
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void createNewRoomWithWrongCapacity() {
-        r1.setCapacity(0);
-        manager.createNewRoom(r1);
+    public void createNewRoomWithWrongCapacityNegative() {
         r1.setCapacity(-1);
         manager.createNewRoom(r1);
     }
@@ -75,9 +64,13 @@ public class RoomManagerImplTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void createNewRoomWithWrongNumber() {
+    public void createNewRoomWithWrongNumberZero() {
         r1.setNumber(0);
         manager.createNewRoom(r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void createNewRoomWithWrongNumberNegative() {
         r1.setNumber(-1);
         manager.createNewRoom(r1);
     }
@@ -187,7 +180,19 @@ public class RoomManagerImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void updateRoomWithWrongId() {
+    public void updateRoomWithWrongIdNegative() {
+        manager.createNewRoom(r1);
+        
+        Long roomId = r1.getId();
+        assertNotNull(roomId);
+        
+        r1 = manager.getRoomById(roomId);
+        r1.setId(-1L);
+        manager.updateRoom(r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateRoomWithWrongIdZero() {
         manager.createNewRoom(r1);
         
         Long roomId = r1.getId();
@@ -195,8 +200,6 @@ public class RoomManagerImplTest {
         
         r1 = manager.getRoomById(roomId);
         r1.setId(0L);
-        manager.updateRoom(r1);
-        r1.setId(-1L);
         manager.updateRoom(r1);
     }
     
@@ -212,7 +215,7 @@ public class RoomManagerImplTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void updateRoomWithWrongCapacity() {
+    public void updateRoomWithWrongCapacityZero() {
         manager.createNewRoom(r1);
         
         Long roomId = r1.getId();
@@ -220,6 +223,15 @@ public class RoomManagerImplTest {
         
         r1.setCapacity(0);
         manager.updateRoom(r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateRoomWithWrongCapacityNegative() {
+        manager.createNewRoom(r1);
+        
+        Long roomId = r1.getId();
+        assertNotNull(roomId);
+        
         r1.setCapacity(-1);
         manager.updateRoom(r1);
     }
@@ -236,7 +248,7 @@ public class RoomManagerImplTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void updateRoomWithWrongNumber() {
+    public void updateRoomWithWrongNumberZero() {
         manager.createNewRoom(r1);
         
         Long roomId = r1.getId();
@@ -244,6 +256,15 @@ public class RoomManagerImplTest {
         
         r1.setNumber(0);
         manager.updateRoom(r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void updateRoomWithWrongNumberNegative() {
+        manager.createNewRoom(r1);
+        
+        Long roomId = r1.getId();
+        assertNotNull(roomId);
+        
         r1.setNumber(-1);
         manager.updateRoom(r1);
     }
@@ -259,7 +280,7 @@ public class RoomManagerImplTest {
     }    
 
     @Test
-    public void deleteRoom() {
+    public void deleteRoomTest() {
         manager.createNewRoom(r1);
         manager.createNewRoom(r2);
 
@@ -285,18 +306,25 @@ public class RoomManagerImplTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void deleteRoomWithWrongId() {
+    public void deleteRoomWithWrongIdZero() {
         manager.createNewRoom(r1);
         Long roomId = r1.getId();
         r1 = manager.getRoomById(roomId);
         r1.setId(0L);
         manager.deleteRoom(r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteRoomWithWrongIdNegative() {
+        manager.createNewRoom(r1);
+        Long roomId = r1.getId();
+        r1 = manager.getRoomById(roomId);
         r1.setId(-1L);
         manager.deleteRoom(r1);
     }
     
     @Test
-    public void findAllRooms() {
+    public void findAllRoomsTest() {
         assertTrue(manager.findAllRooms().isEmpty());
 
         manager.createNewRoom(r1);
@@ -312,7 +340,7 @@ public class RoomManagerImplTest {
     }
 
     @Test
-    public void getRoomById() {
+    public void getRoomByIdTest() {
         assertNull(manager.getRoomById(1L));
 
         manager.createNewRoom(r1);
@@ -335,14 +363,20 @@ public class RoomManagerImplTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void getRoomByIdWithWrongId() {
+    public void getRoomByIdWithWrongIdZero() {
         manager.createNewRoom(r1);
         manager.createNewRoom(r2);
         
         manager.getRoomById(0L);
+    }
+   
+    @Test(expected = IllegalArgumentException.class)
+    public void getRoomByIdWithWrongIdNegative() {
+        manager.createNewRoom(r1);
+        manager.createNewRoom(r2);
+        
         manager.getRoomById(-1L);
     }
-
     static Room newRoom(int capacity, int floor, int number, String note) {
         Room room = new Room();
         room.setCapacity(capacity);

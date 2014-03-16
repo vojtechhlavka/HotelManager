@@ -72,7 +72,7 @@ public class HotelManagerImplTest {
      * @author Petr
      */
     @Test
-    public void accommodateGuestInRoom() {
+    public void accommodateGuestInRoomTest() {
         assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
             //test if free rooms before and after+1 are equal
         List<Room> free1 = manager.findAllFreeRooms();
@@ -99,10 +99,8 @@ public class HotelManagerImplTest {
      * @author Petr
      */
     @Test(expected = IllegalArgumentException.class)
-    public void accommodateGuestInRoomWithNull() {
-        manager.accommodateGuestInRoom(null, r1);
+    public void accommodateGuestInRoomWithNullRoom() {
         manager.accommodateGuestInRoom(g1, null);
-        manager.accommodateGuestInRoom(null, null);
     }
     
     /**
@@ -111,48 +109,152 @@ public class HotelManagerImplTest {
      * @author Petr
      */
     @Test(expected = IllegalArgumentException.class)
-    public void accommodateGuestInRoomWithNulId() {
-        Long roomId = r1.getId();
+    public void accommodateGuestInRoomWithNullGuest() {
+        manager.accommodateGuestInRoom(null, r1);
+    }
+    
+    /**
+     * Testing accomodateGuestInRoom with null
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithNullGuestAndRoom() {
+        manager.accommodateGuestInRoom(null, null);
+    }
+    
+    /**
+     * Testing accomodateGuestInRoom with null r1 id
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithNulIdR() {
         r1.setId(null);
         manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+    /**
+     * Testing accomodateGuestInRoom with null g1 id
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithNulIdG() {
         g1.setId(null);
         manager.accommodateGuestInRoom(g1, r1);
-        r1.setId(roomId);
+    }
+    /**
+     * Testing accomodateGuestInRoom with null g1 id and r1 id
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithNulIdRG() {
+        r1.setId(null);
+        g1.setId(null);
         manager.accommodateGuestInRoom(g1, r1);
     }
     
     /**
      * Testing accomodateGuestInRoom with WrongId
-     * nule or negative
+     * Good Zero
      * 
      * @author Petr
      */
     @Test(expected = IllegalArgumentException.class)
-    public void accommodateGuestInRoomWithWrongId() {
-        Long roomId = r1.getId();
-        Long guestId = g1.getId();
-        r1.setId(0L);
+    public void accommodateGuestInRoomWithWrongIdGZ() {
         g1.setId(0L);
         manager.accommodateGuestInRoom(g1, r1);
-        r1.setId(0L);
-        g1.setId(-1L);
-        manager.accommodateGuestInRoom(g1, r1);
-        r1.setId(-1L);
-        g1.setId(0L);
-        manager.accommodateGuestInRoom(g1, r1);
-        r1.setId(-1L);
-        g1.setId(-1L);
-        manager.accommodateGuestInRoom(g1, r1);
-        g1.setId(guestId);
-        manager.accommodateGuestInRoom(g1, r1);
-        r1.setId(0L);
-        manager.accommodateGuestInRoom(g1, r1);
-        r1.setId(roomId);
-        g1.setId(0L);
-        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+        /**
+     * Testing accomodateGuestInRoom with WrongId
+     * Good Negative
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongIdGN() {
         g1.setId(-1L);
         manager.accommodateGuestInRoom(g1, r1);
     }
+    
+    /**
+     * Testing accomodateGuestInRoom with WrongId
+     * Zero Good
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongIdZG() {
+        r1.setId(0L);
+        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+     /**
+     * Testing accomodateGuestInRoom with WrongId
+     * Negative Good
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongIdNG() {
+        r1.setId(-1L);
+        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+     /**
+     * Testing accomodateGuestInRoom with WrongId
+     * zero zero
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongIdZZ() {
+        r1.setId(0L);
+        g1.setId(0L);
+        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+ /**
+     * Testing accomodateGuestInRoom with WrongId
+     * zero Negative
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongIdZN() {
+        r1.setId(0L);
+        g1.setId(-1L);
+        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+    /**
+     * Testing accomodateGuestInRoom with WrongId
+     * Negative zero
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongIdNZ() {
+        r1.setId(-1L);
+        g1.setId(0L);
+        manager.accommodateGuestInRoom(g1, r1);
+    }
+    
+     /**
+     * Testing accomodateGuestInRoom with WrongId
+     * Negative Negative
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInRoomWithWrongIdNN() {
+        r1.setId(-1L);
+        g1.setId(-1L);
+        manager.accommodateGuestInRoom(g1, r1);
+    }  
     
     /**
      * Testing accomodateGuestInRoom Overfull
@@ -168,69 +270,95 @@ public class HotelManagerImplTest {
         manager.accommodateGuestInRoom(g4, r2); //throw excpeiton
     }    
     
+    /**
+     * Testing accomodateGuestInRoom - accomodate A Guest to more Room-> throw IllegalArgumentException
+     * Firt guest must be removed
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void accommodateGuestInMoreRooms() {
+        manager.accommodateGuestInRoom(g1, r2);
+        manager.accommodateGuestInRoom(g1, r3);//throw excpeiton
+    }    
     
-    
+    /**
+     * @author Vojta
+     */
     @Test
     public void removeGuestFromRoomTest() {
-        Room room = newRoom(4, 1, 1, "Poznámka");
-        Room room2 = newRoom(4, 2, 2, "Poznámka2");
-        Guest guest1 = newGuest("Jméno", "Příjmení", "123456789", Gender.MALE);
-        Guest guest2 = newGuest("Jméno2", "Příjmení2", "987654321", Gender.FEMALE);
-        Guest guest3 = newGuest("Jméno3", "Příjmení3", "111111111", Gender.MALE);
-
-        manager.accommodateGuestInRoom(guest1, room);
-        manager.accommodateGuestInRoom(guest2, room);
-        manager.accommodateGuestInRoom(guest3, room);
-
-        manager.removeGuestFromRoom(guest1, room);
-        List<Guest> guests = manager.getGuestsOfRoom(room);
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        // removing 1 guest:
+        manager.removeGuestFromRoom(g1, r1);
+        List<Guest> guests = manager.getGuestsOfRoom(r1);
         assertEquals(2, guests.size());
-
-        manager.removeGuestFromRoom(guest2, room);
-        guests = manager.getGuestsOfRoom(room);
-        assertEquals(1, guests.size());
-
-        // removing removed guest:
-        try {
-            manager.removeGuestFromRoom(guest1, room);
-            fail();
-        } catch (Exception ex) {
-            // OK
-        }
-
-        // removing guest from wrong room
-        try {
-            manager.removeGuestFromRoom(guest3, room2);
-            fail();
-        } catch (Exception ex) {
-            // OK
-        }
-
-        // wrong arguments:
-        try {
-            manager.removeGuestFromRoom(guest3, null);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            // OK
-        }
-
-        try {
-            manager.removeGuestFromRoom(null, room);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            // OK
-        }
-
-        try {
-            manager.removeGuestFromRoom(null, null);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            // OK
-        }
-
-        // checking the number of guest after wrong operatoins:
-        guests = manager.getGuestsOfRoom(room);
-        assertEquals(1, guests.size());
+        // removing all remaining guests:
+        manager.removeGuestFromRoom(g2, r1);
+        manager.removeGuestFromRoom(g3, r1);
+        guests = manager.getGuestsOfRoom(r1);
+        assertNull(guests); // No guests
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeRemovedGuest() {
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        manager.removeGuestFromRoom(g1, r1);
+        manager.removeGuestFromRoom(g1, r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeGuestFromWrongRoom() {
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        manager.removeGuestFromRoom(g3, r2);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeGuestFromNullRoom() {
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        manager.removeGuestFromRoom(g3, null);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeNullGuest() {
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        manager.removeGuestFromRoom(null, r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeNullGuestFromNullRoom() {
+        manager.removeGuestFromRoom(null, null);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeGuestWithNullIdFromRoom() {
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        Long id = g1.getId();
+        Guest guest = guestM.getGuestById(id);
+        guest.setId(null);
+        manager.removeGuestFromRoom(guest, r1);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void removeGuestFromRoomWithNullId() {
+        manager.accommodateGuestInRoom(g1, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1);
+        Long id = r1.getId();
+        Room room = roomM.getRoomById(id);
+        room.setId(null);
+        manager.removeGuestFromRoom(g1, room);
     }
 
     
@@ -241,7 +369,7 @@ public class HotelManagerImplTest {
      * @author Petr
      */
     @Test
-    public void getGuestsOfRoom() {
+    public void getGuestsOfRoomTest() {
         assertTrue(manager.getGuestsOfRoom(r1).isEmpty());
         assertTrue(manager.getGuestsOfRoom(r2).isEmpty());
         assertTrue(manager.getGuestsOfRoom(r3).isEmpty());
@@ -299,9 +427,18 @@ public class HotelManagerImplTest {
      * @author Petr
      */
     @Test(expected = IllegalArgumentException.class)
-    public void getGuestsOfRoomWithWrongId() {
+    public void getGuestsOfRoomWithWrongIdZero() {
         r1.setId(0L);
         manager.getGuestsOfRoom(r1);
+    }
+    
+    /**
+     * Testing GetGuestOfRoom method if is given wrong id
+     * 
+     * @author Petr
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void getGuestsOfRoomWithWrongIdNegative() {
         r1.setId(-1L);
         manager.getGuestsOfRoom(r1);
     }
@@ -312,7 +449,7 @@ public class HotelManagerImplTest {
      * @author Petr
      */
     @Test
-    public void findAllFreeRooms() {
+    public void findAllFreeRoomsTest() {
             //When rooms are all free
         List<Room> result = manager.findAllFreeRooms();
         List<Room> expected = Arrays.asList(r1, r2, r3);
@@ -328,7 +465,70 @@ public class HotelManagerImplTest {
         
             //When we accommodate some Guest to room
         result = manager.findAllFreeRooms();
-        expected = Arrays.asList(r1, r3);
+        expected = Arrays.asList(r3);
+        Collections.sort(result, new RoomComparator());
+        Collections.sort(expected, new RoomComparator());
+        assertEquals(expected, result);
+        assertDeepEqualsCollectionRoom(expected, result);
+    }
+    
+    /**
+     * Testing finding free rooms without createRoom
+     * 
+     * @author Petr
+     */
+    @Test
+    public void findAllFreeRoomsWithoutRoomTest() {
+        roomM.deleteRoom(r1);
+        roomM.deleteRoom(r2);
+        roomM.deleteRoom(r3);
+        
+        List<Room> result = manager.findAllFreeRooms();
+        List<Room> expected = Arrays.asList();
+        Collections.sort(result, new RoomComparator());
+        Collections.sort(expected, new RoomComparator());
+        assertEquals(expected, result);
+        assertDeepEqualsCollectionRoom(expected, result);
+    }
+    
+    /**
+     * Testing finding free rooms with all full rooms
+     * 
+     * @author Petr
+     */
+    @Test
+    public void findAllFreeRoomsWithFullRoomTest() {
+        Guest g6 = newGuest("Jana", "Horšová", "456789789", Gender.FEMALE);        
+        guestM.createNewGuest(g6);
+        Guest g7 = newGuest("Janaa", "Horšaová", "476789789", Gender.FEMALE);        
+        guestM.createNewGuest(g7);
+        Guest g8 = newGuest("Janaaa", "Horšovaá", "419789789", Gender.FEMALE);        
+        guestM.createNewGuest(g8);
+        Guest g9 = newGuest("Petr", "Horš", "719789789", Gender.MALE);        
+        guestM.createNewGuest(g9);
+        Guest g10 = newGuest("Pavel", "Horš", "789789789", Gender.MALE);        
+        guestM.createNewGuest(g10);
+        Guest g11 = newGuest("Pavela", "Horšaa", "789789781", Gender.MALE);        
+        guestM.createNewGuest(g11);
+        Guest g12 = newGuest("Pavelaa", "Horša", "789789782", Gender.MALE);        
+        guestM.createNewGuest(g12);
+        
+        manager.accommodateGuestInRoom(g1, r2);
+        manager.accommodateGuestInRoom(g3, r2);
+        manager.accommodateGuestInRoom(g4, r2);
+        manager.accommodateGuestInRoom(g5, r1);
+        manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g6, r1);
+        manager.accommodateGuestInRoom(g7, r1);
+        manager.accommodateGuestInRoom(g8, r1);
+        manager.accommodateGuestInRoom(g9, r3);
+        manager.accommodateGuestInRoom(g10, r3);
+        manager.accommodateGuestInRoom(g11, r3);
+        manager.accommodateGuestInRoom(g12, r3);
+        
+            //When have full rooms
+        List<Room> result = manager.findAllFreeRooms();
+        List<Room> expected = Arrays.asList();
         Collections.sort(result, new RoomComparator());
         Collections.sort(expected, new RoomComparator());
         assertEquals(expected, result);
