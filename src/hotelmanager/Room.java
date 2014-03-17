@@ -27,6 +27,12 @@ public class Room {
         return id;
     }
 
+    /**
+     * Sets id of this room
+     *
+     * @param id id of this room which must be a positive integer and diffferent
+     * from other IDs
+     */
     public void setId(Long id) {
         this.id = id;
     }
@@ -35,6 +41,11 @@ public class Room {
         return capacity;
     }
 
+    /**
+     * Sets capacity of room
+     *
+     * @param capacity maximal capacity of room which must be a positive integer
+     */
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
@@ -43,6 +54,11 @@ public class Room {
         return floor;
     }
 
+    /**
+     * Sets floor of room
+     *
+     * @param floor floor of room which must be a non-negative integer
+     */
     public void setFloor(int floor) {
         this.floor = floor;
     }
@@ -51,6 +67,12 @@ public class Room {
         return number;
     }
 
+    /**
+     * Sets number (label) of room
+     *
+     * @param number number of this this which should be different from other
+     * numbers of rooms
+     */
     public void setNumber(int number) {
         this.number = number;
     }
@@ -59,6 +81,12 @@ public class Room {
         return note;
     }
 
+    /**
+     * Sets optional note to this room
+     *
+     * @param note note to this room
+     *
+     */
     public void setNote(String note) {
         this.note = note;
     }

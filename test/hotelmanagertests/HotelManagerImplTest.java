@@ -294,11 +294,18 @@ public class HotelManagerImplTest {
         manager.removeGuestFromRoom(g1, r1);
         List<Guest> guests = manager.getGuestsOfRoom(r1);
         assertEquals(2, guests.size());
+        List<Guest> expected = Arrays.asList(g2, g3);
+        Collections.sort(guests, new GuestComparator());
+        Collections.sort(expected, new GuestComparator());
+        assertEquals(expected, guests);
+        assertDeepEqualsCollectionGuest(expected, guests);
+        
         // removing all remaining guests:
         manager.removeGuestFromRoom(g2, r1);
         manager.removeGuestFromRoom(g3, r1);
         guests = manager.getGuestsOfRoom(r1);
-        assertNull(guests); // No guests
+        assertNotNull(guests); // No guests
+        assertEquals(0, guests.size());
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -360,7 +367,6 @@ public class HotelManagerImplTest {
         room.setId(null);
         manager.removeGuestFromRoom(g1, room);
     }
-
     
     
     /**

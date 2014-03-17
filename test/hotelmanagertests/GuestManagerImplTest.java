@@ -1,5 +1,11 @@
 package hotelmanagertests;
 
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 import hotelmanager.Gender;
 import hotelmanager.Guest;
 import hotelmanager.GuestComparator;
@@ -465,7 +471,8 @@ public class GuestManagerImplTest {
         guestManager.deleteGuest(guest2);
         guestManager.deleteGuest(guest3);
         guests = guestManager.findAllGuests();
-        assertNull(guests); // No guests
+        assertNotNull(guests); // No guests
+        assertEquals(0, guests.size());
     }
     
     @Test (expected = IllegalArgumentException.class)
@@ -512,7 +519,7 @@ public class GuestManagerImplTest {
         guestManager.deleteGuest(guest1); // ID id doesn't exist now
         Guest guest = guestManager.getGuestById(id);
     }
-    
+
     static Guest newGuest(String name, String surname, String identityCardNumber, Gender gender) {
         Guest guest = new Guest();
         guest.setName(name);

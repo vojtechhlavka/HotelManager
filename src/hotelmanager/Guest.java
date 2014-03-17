@@ -21,11 +21,18 @@ public class Guest {
      */
     public Guest() {
     }
+    private String string;
 
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets ID of this guest
+     *
+     * @param id id of this Guest which must be a positive integer and different
+     * from other IDs
+     */
     public void setId(Long id) {
         this.id = id;
     }
@@ -34,6 +41,13 @@ public class Guest {
         return name;
     }
 
+    /**
+     * Sets name of guest
+     *
+     * @param name name of guest which must be nonempty string consisting of
+     * only letters of alphabet
+     *
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -42,6 +56,12 @@ public class Guest {
         return surname;
     }
 
+    /**
+     * Sets surname of guest
+     *
+     * @param surname surname of guest which must be nonempty string consisting
+     * of only letters of alphabet
+     */
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -50,6 +70,12 @@ public class Guest {
         return identityCardNumber;
     }
 
+    /**
+     * Sets identity card number of guest
+     *
+     * @param identityCardNumber number of guest's identity card which must be
+     * string consisting of just 9 digits
+     */
     public void setIdentityCardNumber(String identityCardNumber) {
         this.identityCardNumber = identityCardNumber;
     }
@@ -58,6 +84,12 @@ public class Guest {
         return gender;
     }
 
+    /**
+     * Sets gender of guest
+     *
+     * @param gender gender of guest which must be from enum {MALE,FEMALE}
+     *
+     */
     public void setGender(Gender gender) {
         this.gender = gender;
     }
