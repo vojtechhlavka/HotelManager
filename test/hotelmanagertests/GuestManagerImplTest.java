@@ -6,6 +6,10 @@ package hotelmanagertests;
  * and open the template in the editor.
  */
 
+/**
+ * Přidaný komentář!
+ */
+
 import hotelmanager.Gender;
 import hotelmanager.Guest;
 import hotelmanager.GuestComparator;
