@@ -38,6 +38,10 @@ public class RoomManagerImpl implements RoomManager {
         */
     }
     
+    public RoomManagerImpl() /*for now kvuli chybe*/ {
+
+    }
+    
     @Override
     public void createNewRoom(Room room) {
         //throw new UnsupportedOperationException("Not supported yet.");

@@ -6,21 +6,18 @@ package hotelmanagertests;
  * and open the template in the editor.
  */
 
-/**
- * Přidaný komentář!
- */
-
-/**
- * Přidaný druhý komentář od Petr
- */
 
 import hotelmanager.Gender;
 import hotelmanager.Guest;
 import hotelmanager.GuestComparator;
 import hotelmanager.GuestManagerImpl;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.After;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,16 +31,33 @@ public class GuestManagerImplTest {
 
     private GuestManagerImpl guestManager;
     private Guest guest1, guest2, guest3;
+    private Connection conn;
 
     @Before
-    public void setUp() {
-        guestManager = new GuestManagerImpl();
+    public void setUp() throws SQLException{
+        conn = DriverManager.getConnection("jdbc:derby:memory:HotelManagerDatabaseTest;create=true");
+        conn.prepareStatement("CREATE TABLE guest ("
+                + "id bigint primary key generated always as identity,"
+                + "name varchar(50),"
+                + "surname varchar(50),"
+                + "identityCardNumber varchar(9),"
+                + "gender varchar(6))"
+        ).executeUpdate();
+        
+        guestManager = new GuestManagerImpl(conn);
+        
         guest1 = newGuest("Jméno", "Příjmení", "123456789", Gender.MALE);
         guest2 = newGuest("JménoB", "PříjmeníB", "987654321", Gender.FEMALE);
         guest3 = newGuest("JmenoC", "PrijmeniC", "333333333", Gender.MALE);
         guestManager.createNewGuest(guest1);
         guestManager.createNewGuest(guest2);
         guestManager.createNewGuest(guest3);
+    }
+    
+    @After
+    public void tearDown() throws SQLException {
+        conn.prepareStatement("DROP TABLE guest").executeUpdate();
+        conn.close();
     }
 
     @Test
@@ -79,8 +93,20 @@ public class GuestManagerImplTest {
     }
     
     @Test (expected = IllegalArgumentException.class)
+    public void createGuestWithWrongLengthName() {
+        Guest guest = newGuest("NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép", "Novép", "123456789", Gender.MALE);
+        guestManager.createNewGuest(guest);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
     public void createGuestWithNullSurname() {
         Guest guest = newGuest("Novéjméno", null, "123456789", Gender.MALE);
+        guestManager.createNewGuest(guest);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void createGuestWithWrongLengthSurName() {
+        Guest guest = newGuest("Novejméno", "NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép", "123456789", Gender.MALE);
         guestManager.createNewGuest(guest);
     }
     
@@ -337,6 +363,22 @@ public class GuestManagerImplTest {
         Guest guest = guestManager.getGuestById(id);
         guest.setIdentityCardNumber("1234567890"); // more than 9 digits
         guestManager.updateGuest(guest);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void updateGuestWithWrongLengthName() {
+        Long id = guest1.getId();
+        Guest guest = guestManager.getGuestById(id);
+        guest.setName("NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép"); // more than 9 digits
+        guestManager.createNewGuest(guest);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void updateGuestWithWrongLengthSurName() {
+        Long id = guest1.getId();
+        Guest guest = guestManager.getGuestById(id);
+        guest.setSurname("NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép"); // more than 9 digits
+        guestManager.createNewGuest(guest);
     }
     
     @Test
