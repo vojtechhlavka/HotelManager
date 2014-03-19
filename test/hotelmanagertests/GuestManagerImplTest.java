@@ -10,6 +10,10 @@ package hotelmanagertests;
  * Přidaný komentář!
  */
 
+/**
+ * Přidaný druhý komentář od Petra
+ */
+
 import hotelmanager.Gender;
 import hotelmanager.Guest;
 import hotelmanager.GuestComparator;
