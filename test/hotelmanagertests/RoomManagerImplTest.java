@@ -3,6 +3,7 @@ package hotelmanagertests;
 import hotelmanager.Room;
 import hotelmanager.RoomComparator;
 import hotelmanager.RoomManagerImpl;
+//import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -48,7 +49,7 @@ public class RoomManagerImplTest {
     
     @After
     public void tearDown() throws SQLException {
-        connection.prepareStatement("DROP TABLE ROOMS").executeUpdate();        
+        connection.prepareStatement("DROP TABLE ROOM").executeUpdate();        
         connection.close();
     }
 

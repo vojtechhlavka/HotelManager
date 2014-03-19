@@ -518,6 +518,11 @@ public class GuestManagerImplTest {
     }
     
     @Test (expected = IllegalArgumentException.class)
+    public void getGuestByZeroId() {
+        Guest result = guestManager.getGuestById(0L);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
     public void getGuestByNonexistingId() {
         Long id = guest1.getId();
         guestManager.deleteGuest(guest1); // ID id doesn't exist now

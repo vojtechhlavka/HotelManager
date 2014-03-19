@@ -1,5 +1,6 @@
 package hotelmanager;
 
+//import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,8 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+//import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+//import java.util.logging.SimpleFormatter;
 
 /**
  * This class implements RoomManager.
@@ -20,11 +23,20 @@ public class RoomManagerImpl implements RoomManager {
     public static final Logger logger = Logger.getLogger(RoomManagerImpl.class.getName());
     private Connection connection;
     
-    public RoomManagerImpl(Connection connection) {
+    public RoomManagerImpl(Connection connection) /*throws IOException*/ {
         this.connection = connection;
-    }  
-    
-    // heslo: "zFTY3Mv5GgZdiS"
+        
+        /*
+        //logger.addHandler(new FileHandler("Logging.txt"));
+        
+        FileHandler fileHandler = new FileHandler("Logging.log", 2000, 5);
+        SimpleFormatter formatterTxt = new SimpleFormatter();
+        fileHandler.setFormatter(formatterTxt);
+        logger.addHandler(fileHandler);
+        
+        //logger.log(Level.SEVERE, "zpráva");
+        */
+    }
     
     @Override
     public void createNewRoom(Room room) {
@@ -282,7 +294,7 @@ public class RoomManagerImpl implements RoomManager {
             
         } catch (SQLException ex) {
             throw new ServiceFailureException(
-                    "Error when retrieving all rooms", ex);
+                    "Error when retrieving all room", ex);
         } finally {
             if (st != null) {
                 try {
