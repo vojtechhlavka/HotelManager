@@ -63,7 +63,7 @@ public class RoomManagerImpl implements RoomManager {
         PreparedStatement st = null;
         try {
             st = connection.prepareStatement(
-                    "INSERT INTO ROOMS (capacity,floor,number,note) VALUES (?,?,?,?)",
+                    "INSERT INTO ROOM (capacity,floor,number,note) VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, room.getCapacity());
             st.setInt(2, room.getFloor());
@@ -156,7 +156,7 @@ public class RoomManagerImpl implements RoomManager {
         PreparedStatement st = null;
         try {
             st = connection.prepareStatement(
-                    "UPDATE rooms SET capacity=?,floor=?,number=?,note=? " + 
+                    "UPDATE room SET capacity=?,floor=?,number=?,note=? " + 
                     "WHERE id = ?");
             st.setInt(1, room.getCapacity());
             st.setInt(2, room.getFloor());
@@ -192,7 +192,7 @@ public class RoomManagerImpl implements RoomManager {
         PreparedStatement st = null;
         try {
             st = connection.prepareStatement(
-                    "SELECT id,capacity,floor,number,note FROM rooms WHERE number = ?");
+                    "SELECT id,capacity,floor,number,note FROM room WHERE number = ?");
             st.setInt(1, number);
             ResultSet rs = st.executeQuery();
             
@@ -243,7 +243,7 @@ public class RoomManagerImpl implements RoomManager {
         PreparedStatement st = null;
         try {
             st = connection.prepareStatement(
-                    "DELETE FROM rooms WHERE id = ?");
+                    "DELETE FROM room WHERE id = ?");
             st.setLong(1, room.getId());
             
             int deletedRows = st.executeUpdate();
@@ -271,7 +271,7 @@ public class RoomManagerImpl implements RoomManager {
         PreparedStatement st = null;
         try {
             st = connection.prepareStatement(
-                    "SELECT id,capacity,floor,number,note FROM rooms");
+                    "SELECT id,capacity,floor,number,note FROM room");
             ResultSet rs = st.executeQuery();
             
             List<Room> result = new ArrayList<Room>();
@@ -319,7 +319,7 @@ public class RoomManagerImpl implements RoomManager {
         PreparedStatement st = null;
         try {
             st = connection.prepareStatement(
-                    "SELECT id,capacity,floor,number,note FROM rooms WHERE id = ?");
+                    "SELECT id,capacity,floor,number,note FROM room WHERE id = ?");
             st.setLong(1, id);
             ResultSet rs = st.executeQuery();
             

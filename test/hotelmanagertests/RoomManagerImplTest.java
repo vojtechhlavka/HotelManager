@@ -31,7 +31,7 @@ public class RoomManagerImplTest {
         //--String url = "jdbc:derby://localhost:1527/HotelManagerDatabaseDemo;create=true";
         //--connection = DriverManager.getConnection(url, "HotelManager", "zFTY3Mv5GgZdiS");
         connection = DriverManager.getConnection("jdbc:derby:memory:HotelManagerDatabaseTest;create=true");
-        connection.prepareStatement("CREATE TABLE ROOMS ("
+        connection.prepareStatement("CREATE TABLE ROOM ("
                 + "id bigint primary key generated always as identity,"
                 + "capacity int not null,"
                 + "floor int not null,"
