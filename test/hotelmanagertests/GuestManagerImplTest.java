@@ -11,7 +11,7 @@ package hotelmanagertests;
  */
 
 /**
- * Přidaný druhý komentář od Petra
+ * Přidaný druhý komentář od Petr
  */
 
 import hotelmanager.Gender;
