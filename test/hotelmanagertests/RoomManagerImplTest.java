@@ -3,9 +3,13 @@ package hotelmanagertests;
 import hotelmanager.Room;
 import hotelmanager.RoomComparator;
 import hotelmanager.RoomManagerImpl;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.After;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +23,33 @@ import static org.junit.Assert.*;
 public class RoomManagerImplTest {
     private RoomManagerImpl manager;
     private Room r1, r2, r3;
+    
+    private Connection connection;
 
     @Before
-    public void setUp() {
-        this.manager = new RoomManagerImpl();
+    public void setUp() throws SQLException {
+        //--String url = "jdbc:derby://localhost:1527/HotelManagerDatabaseDemo;create=true";
+        //--connection = DriverManager.getConnection(url, "HotelManager", "zFTY3Mv5GgZdiS");
+        connection = DriverManager.getConnection("jdbc:derby:memory:HotelManagerDatabaseTest;create=true");
+        connection.prepareStatement("CREATE TABLE ROOMS ("
+                + "id bigint primary key generated always as identity,"
+                + "capacity int not null,"
+                + "floor int not null,"
+                + "number int not null,"
+                + "note varchar(255))").executeUpdate();
+        
+        //--this.manager = new RoomManagerImpl();
+        manager = new RoomManagerImpl(connection);
 
         r1 = newRoom(5, 1, 1, "Nice room.");
         r2 = newRoom(5, 1, 2, "Great room with good smelt.");
         r3 = newRoom(4, 1, 3, "Bad room.");
+    }
+    
+    @After
+    public void tearDown() throws SQLException {
+        connection.prepareStatement("DROP TABLE ROOMS").executeUpdate();        
+        connection.close();
     }
 
     @Test
