@@ -50,7 +50,7 @@ public interface GuestManager {
      *
      * @param id primary key of finded guest
      *
-     * @return guest with given id or null if such guest was not find
+     * @return guest with given id
      * @throws IllegalArgumentException when id is null
      */
     public Guest getGuestById(Long id);

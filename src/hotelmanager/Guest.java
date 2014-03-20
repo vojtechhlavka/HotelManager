@@ -21,7 +21,6 @@ public class Guest {
      */
     public Guest() {
     }
-    private String string;
 
     public Long getId() {
         return id;

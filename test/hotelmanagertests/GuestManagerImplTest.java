@@ -72,7 +72,7 @@ public class GuestManagerImplTest {
         assertNotNull(guest);
         assertEquals("Novéjméno", guest.getName());
         assertEquals("Novépříjmení", guest.getSurname());
-        assertEquals("012345678", guest.getIdentityCardNumber());
+        assertEquals("111111111", guest.getIdentityCardNumber());
         assertEquals(Gender.MALE, guest.getGender());
     }
     
@@ -542,7 +542,7 @@ public class GuestManagerImplTest {
         List<Guest> expected = Arrays.asList(guest1, guest2, guest3);
         Collections.sort(result, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
-        assertEquals(expected, result);
+        assertDeepEqualsGuest(expected, result); //Changed to DEEEEP
         assertDeepEqualsCollectionGuest(expected, result);
     }
 
@@ -550,7 +550,9 @@ public class GuestManagerImplTest {
     public void getGuestByIdTest() {
         Long id = guest1.getId();
         Guest result = guestManager.getGuestById(id);
-        assertEquals(guest1, result);
+        System.err.println(guest1.toString());
+        System.err.println(result.toString());
+        assertDeepEqualsGuest(guest1, result); //Changed to DEEEEP
     }
     
     @Test (expected = IllegalArgumentException.class)
