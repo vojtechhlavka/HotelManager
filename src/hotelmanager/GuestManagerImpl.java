@@ -203,6 +203,15 @@ public class GuestManagerImpl implements GuestManager {
             throw new IllegalArgumentException("Gender must be MALE or FEMALE");
         }
         
+        
+        
+        Long tmp = getGuestWithGivenIdentityCard(guest.getIdentityCardNumber());
+        if(tmp != null && tmp != guest.getId()) { // exists room with different ID but same number
+            // ID cannot be changed
+            throw new IllegalArgumentException("Another guest with given identityCardNumber "
+                    + "(and different ID) already exists");
+        }
+        
         try(PreparedStatement st = conn.prepareStatement(
                 "UPDATE guest SET name=?, surname=?, identityCardNumber=?, gender=? WHERE id=?")) {
             st.setString(1, guest.getName());
@@ -212,13 +221,49 @@ public class GuestManagerImpl implements GuestManager {
             st.setLong(5, guest.getId());
             int updatedGuest = st.executeUpdate();
             if(updatedGuest != 1) {
-                throw new IllegalArgumentException("Internal Error: More rows "
+                throw new ServiceFailureException("Internal Error: More rows "
                         + "updated when trying to update guest " + guest);
             }
         } catch(SQLException ex) {
             throw new ServiceFailureException("Errow when updating guest" + guest, ex);
         }
         
+    }
+    
+    public Long getGuestWithGivenIdentityCard(String number) {
+        PreparedStatement st = null;
+        try {
+            st = conn.prepareStatement(
+                    "SELECT id,name, surname, identityCardNumber, gender FROM guest WHERE identityCardNumber = ?");
+            st.setString(1, number);
+            ResultSet rs = st.executeQuery();
+            
+            if (rs.next()) {
+                Guest guest = newGuestFromResult(rs);
+
+                if (rs.next()) {
+                    throw new ServiceFailureException(
+                            "Internal error: More entities with the same identityCardNumber found "
+                            + "(source number: " + number + ", found " + guest + " and " + newGuestFromResult(rs));                    
+                }            
+                
+                return guest.getId(); // vrátí ID daného pokoje (kontrakt)
+            } else {
+                return null; // pokoj s danym cislem neexistuje (kontrakt)
+            }
+            
+        } catch (SQLException ex) {
+            throw new ServiceFailureException(
+                    "Error when retrieving room with number " + number, ex);
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     @Override

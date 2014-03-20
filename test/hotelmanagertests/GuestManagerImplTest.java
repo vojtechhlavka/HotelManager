@@ -515,7 +515,7 @@ public class GuestManagerImplTest {
         List<Guest> expected = Arrays.asList(guest2, guest3);
         Collections.sort(guests, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
-        assertEquals(expected, guests);
+        //assertEquals(expected, guests);//Changed
         assertDeepEqualsCollectionGuest(expected, guests);
         // deleting all remaining guests:
         guestManager.deleteGuest(guest2);
@@ -542,7 +542,7 @@ public class GuestManagerImplTest {
         List<Guest> expected = Arrays.asList(guest1, guest2, guest3);
         Collections.sort(result, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
-        assertDeepEqualsGuest(expected, result); //Changed to DEEEEP
+        //assertEquals(expected, result);Changed
         assertDeepEqualsCollectionGuest(expected, result);
     }
 
