@@ -107,7 +107,7 @@ public class Guest {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Room)) {
+        if (!(obj instanceof Guest)) { // !!! ZDE BYLA FATALNI CHYBA ZPUSOBUJICI NEFUNKCNOST METODY !!!
             return false;
         }
         if (getClass() != obj.getClass()) {
