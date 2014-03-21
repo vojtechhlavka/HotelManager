@@ -70,6 +70,10 @@ public class RoomManagerImpl implements RoomManager {
             throw new IllegalArgumentException("Room with given number already exists");
         }
         
+        if(room.getNote().length() > 255) {
+            throw new IllegalArgumentException("The note is too long");
+        }
+        
         /*
         if(room.getNote() == null) {
             room.setNote("");
@@ -154,6 +158,10 @@ public class RoomManagerImpl implements RoomManager {
         
         if(room.getNumber() <= 0) {
             throw new IllegalArgumentException("Number of room must be a positive number");
+        }
+        
+        if(room.getNote().length() > 255) {
+            throw new IllegalArgumentException("The note is too long");
         }
         
         Long tmp = getRoomWithGivenNumber(room.getNumber());
@@ -255,6 +263,8 @@ public class RoomManagerImpl implements RoomManager {
         if(room.getId() <= 0) {
             throw new IllegalArgumentException("ID of room must be a positive integer");
         }
+        
+        // overovani zda dany pokoj vubec existuje???
         
         PreparedStatement st = null;
         try {

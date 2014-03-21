@@ -106,7 +106,42 @@ public class RoomManagerImplTest {
         r2.setNumber(roomNumber);
         manager.createNewRoom(r2); //Throw IllegalArgumentException - Can not be number which exiting in dtb
     }
+    
+    // Added HW3
+    @Test
+    public void createNewRoomWithNoteWithLength255() {
+        String note = ".................................................." + 
+                ".................................................." + 
+                ".................................................." + 
+                ".................................................." + 
+                ".................................................." + 
+                "12345";
+        r1.setNote(note);
+        manager.createNewRoom(r1);
+
+        Long roomId = r1.getId();
+        assertNotNull(roomId);
+        Room result = manager.getRoomById(roomId);
         
+        assertEquals(r1.getCapacity(), result.getCapacity());
+        assertEquals(r1.getFloor(), result.getFloor());
+        assertEquals(r1.getNumber(), result.getNumber());
+        assertEquals(note, result.getNote());
+    }
+    
+    
+    // Added HW3
+    @Test(expected = IllegalArgumentException.class)
+    public void createNewRoomWithNoteWithLength256() {
+        String note = ".................................................." + 
+                ".................................................." + 
+                ".................................................." + 
+                ".................................................." + 
+                ".................................................." + 
+                "123456";
+        r1.setNote(note);
+        manager.createNewRoom(r1);
+    }
 
     @Test
     public void updateRoomCapacity() {
