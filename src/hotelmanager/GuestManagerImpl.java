@@ -61,6 +61,8 @@ public class GuestManagerImpl implements GuestManager {
             throw new IllegalArgumentException("Name of guest has zero length");
         }
         
+        
+        
         if(guest.getSurname().replaceAll("\\s", "").length() == 0) {
             throw new IllegalArgumentException("Surname of guest has zero length");
         }
