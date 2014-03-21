@@ -61,8 +61,6 @@ public class GuestManagerImpl implements GuestManager {
             throw new IllegalArgumentException("Name of guest has zero length");
         }
         
-        
-        
         if(guest.getSurname().replaceAll("\\s", "").length() == 0) {
             throw new IllegalArgumentException("Surname of guest has zero length");
         }
@@ -105,14 +103,18 @@ public class GuestManagerImpl implements GuestManager {
         if( Arrays.asList(Gender.values()).contains(guest.getGender()) == false ) {
             throw new IllegalArgumentException("Gender must be MALE or FEMALE");
         }
+        
+        if(getGuestWithGivenIdentityCard(guest.getIdentityCardNumber().toString()) != null )  {
+            throw new IllegalArgumentException("Guest with this Number IdentityCard exists already");
+        }
                 
         
         try(PreparedStatement st = conn.prepareStatement(
                 "INSERT INTO guest (name, surname, identityCardNumber, gender) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             
-            st.setString(1, guest.getName());
-            st.setString(2, guest.getSurname());
-            st.setString(3, guest.getIdentityCardNumber());
+            st.setString(1, guest.getName().replaceAll("\\s", ""));
+            st.setString(2, guest.getSurname().replaceAll("\\s", ""));
+            st.setString(3, guest.getIdentityCardNumber().replaceAll("\\s", ""));
             st.setString(4, guest.getGender().name());
             int addedRows = st.executeUpdate();
             
@@ -216,9 +218,9 @@ public class GuestManagerImpl implements GuestManager {
         
         try(PreparedStatement st = conn.prepareStatement(
                 "UPDATE guest SET name=?, surname=?, identityCardNumber=?, gender=? WHERE id=?")) {
-            st.setString(1, guest.getName());
-            st.setString(2, guest.getSurname());
-            st.setString(3, guest.getIdentityCardNumber());
+            st.setString(1, guest.getName().replaceAll("\\s", ""));
+            st.setString(2, guest.getSurname().replaceAll("\\s", ""));
+            st.setString(3, guest.getIdentityCardNumber().replaceAll("\\s", ""));
             st.setString(4, guest.getGender().name());
             st.setLong(5, guest.getId());
             int updatedGuest = st.executeUpdate();

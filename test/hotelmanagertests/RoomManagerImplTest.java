@@ -100,12 +100,26 @@ public class RoomManagerImplTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
+    public void createRoomWithExitingId() {
+        manager.createNewRoom(r1);
+        manager.createNewRoom(r2);
+        
+        Long roomId = r1.getId();
+        assertNotNull(roomId);
+        r2.setId(roomId);
+        manager.createNewRoom(r2);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
     public void createNewRoomWithExitingNumber() {
         manager.createNewRoom(r1);
         int roomNumber = r1.getNumber();
         r2.setNumber(roomNumber);
         manager.createNewRoom(r2); //Throw IllegalArgumentException - Can not be number which exiting in dtb
     }
+    
+    
+    
     
     // Added HW3
     @Test
@@ -272,6 +286,19 @@ public class RoomManagerImplTest {
         r2.setId(roomId);
         manager.updateRoom(r2);
     }
+    
+    
+    // Added HW3
+    @Test (expected = IllegalArgumentException.class)
+    public void updateRoomtWithExitingNumber() {
+        Long id1 = r1.getId();
+        Long id2 = r2.getId();
+        r1 = manager.getRoomById(id1);
+        r2 = manager.getRoomById(id2);
+        r2.setNumber(r1.getNumber()); // r2: number 1
+        manager.updateRoom(r2);
+    }
+    
     
     @Test(expected = IllegalArgumentException.class)
     public void updateRoomWithWrongCapacityZero() {
