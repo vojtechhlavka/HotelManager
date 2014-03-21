@@ -72,13 +72,20 @@ public class GuestManagerImplTest {
         assertNotNull(guest);
         assertEquals("Novéjméno", guest.getName());
         assertEquals("Novépříjmení", guest.getSurname());
-        assertEquals("111111111", guest.getIdentityCardNumber());
+        assertEquals("111111111", guest.getIdentityCardNumber()); // Changed HW3 (Překlep)
         assertEquals(Gender.MALE, guest.getGender());
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void createSameGuestAgain() {
         guestManager.createNewGuest(guest1);
+    }
+    
+    // Added HW3
+    @Test (expected = IllegalArgumentException.class)
+    public void createGuestWithUsedIdentityCardNumber() {
+        Guest guest = newGuest("Novéjméno", "Novépříjmení", "987654321", Gender.MALE); // guest2: "987654321"
+        guestManager.createNewGuest(guest);
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -88,25 +95,51 @@ public class GuestManagerImplTest {
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithNullName() {
-        Guest guest = newGuest(null, "Novépříjmení", "123456789", Gender.MALE);
+        Guest guest = newGuest(null, "Novépříjmení", "111222333", Gender.MALE); // Changed HW3
         guestManager.createNewGuest(guest);
     }
     
+    // Added HW3
+    @Test
+    public void createGuestWithNameWithLength50() {
+        Guest guest = newGuest("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghij", "Novép", "111222333", Gender.MALE);
+        guestManager.createNewGuest(guest); // OK
+        Long id = guest.getId();
+        Guest result = guestManager.getGuestById(id);
+        assertNotNull(result);
+        assertEquals(guest, result);
+        assertDeepEqualsGuest(guest, result);
+    }
+    
+    // Added HW3
     @Test (expected = IllegalArgumentException.class)
-    public void createGuestWithWrongLengthName() {
-        Guest guest = newGuest("NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép", "Novép", "123456789", Gender.MALE);
+    public void createGuestWithNameWithLength51() {
+        Guest guest = newGuest("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghijA", "Novép", "111222333", Gender.MALE);
         guestManager.createNewGuest(guest);
     }
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithNullSurname() {
-        Guest guest = newGuest("Novéjméno", null, "123456789", Gender.MALE);
+        Guest guest = newGuest("Novéjméno", null, "111222333", Gender.MALE); // Changed HW3
         guestManager.createNewGuest(guest);
     }
     
+    // Added HW3
+    @Test
+    public void createGuestWithSurnameWithLength50() {
+        Guest guest = newGuest("Novéj", "AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghij", "111222333", Gender.MALE);
+        guestManager.createNewGuest(guest); // OK
+        Long id = guest.getId();
+        Guest result = guestManager.getGuestById(id);
+        assertNotNull(result);
+        assertEquals(guest, result);
+        assertDeepEqualsGuest(guest, result);
+    }
+    
+    // Added HW3
     @Test (expected = IllegalArgumentException.class)
-    public void createGuestWithWrongLengthSurName() {
-        Guest guest = newGuest("Novejméno", "NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép", "123456789", Gender.MALE);
+    public void createGuestWithSurnameWithLength51() {
+        Guest guest = newGuest("Novéj", "AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghijA", "111222333", Gender.MALE);
         guestManager.createNewGuest(guest);
     }
     
@@ -118,13 +151,13 @@ public class GuestManagerImplTest {
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithSpaceName() {
-        Guest guest = newGuest(" ", "Novépříjmení", "123456789", Gender.FEMALE);
+        Guest guest = newGuest(" ", "Novépříjmení", "111222333", Gender.FEMALE); // Changed HW3
         guestManager.createNewGuest(guest);
     }
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithSpaceSurname() {
-        Guest guest = newGuest("Novéjméno", " ", "123456789", Gender.FEMALE);
+        Guest guest = newGuest("Novéjméno", " ", "111222333", Gender.FEMALE); // Changed HW3
         guestManager.createNewGuest(guest);
     }
     
@@ -194,13 +227,13 @@ public class GuestManagerImplTest {
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithNoName() {
-        Guest guest = newGuest("", "Novépříjmení", "123456789", Gender.MALE);
+        Guest guest = newGuest("", "Novépříjmení", "111222333", Gender.MALE); // Changed HW03
         guestManager.createNewGuest(guest);
     }
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithNoSurname() {
-        Guest guest = newGuest("Novéjméno", "", "123456789", Gender.MALE);
+        Guest guest = newGuest("Novéjméno", "", "111222333", Gender.MALE); // Changed HW03
         guestManager.createNewGuest(guest);
     }
     
@@ -212,19 +245,19 @@ public class GuestManagerImplTest {
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithNullGender() {
-        Guest guest = newGuest("Novéjméno", "Novépříjmení", "123456789", null);
+        Guest guest = newGuest("Novéjméno", "Novépříjmení", "111222333", null); // Changed HW3
         guestManager.createNewGuest(guest);
     }
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithWrongName() {
-        Guest guest = newGuest("123", "Novépříjmení", "123456789", Gender.FEMALE);
+        Guest guest = newGuest("123", "Novépříjmení", "111222333", Gender.FEMALE); // Changed HW03
         guestManager.createNewGuest(guest);
     }
     
     @Test (expected = IllegalArgumentException.class)
     public void createGuestWithWrongSurname() {
-        Guest guest = newGuest("Novéjméno", "123", "123456789", Gender.FEMALE);
+        Guest guest = newGuest("Novéjméno", "123", "111222333", Gender.FEMALE); // Changed HW03
         guestManager.createNewGuest(guest);
     }
 
@@ -365,20 +398,50 @@ public class GuestManagerImplTest {
         guestManager.updateGuest(guest);
     }
     
-    @Test (expected = IllegalArgumentException.class)
-    public void updateGuestWithWrongLengthName() {
+    // Added HW3
+    @Test
+    public void updateGuestWithNameWithLength50() {
         Long id = guest1.getId();
         Guest guest = guestManager.getGuestById(id);
-        guest.setName("NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép"); // more than 9 digits
-        guestManager.createNewGuest(guest);
+        guest.setName("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghij");
+        guestManager.updateGuest(guest); // OK
+        guest = guestManager.getGuestById(id);
+        assertEquals("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghij", guest.getName());
+        assertEquals("Příjmení", guest.getSurname());
+        assertEquals("123456789", guest.getIdentityCardNumber());
+        assertEquals(Gender.MALE, guest.getGender());
     }
     
+    // Added HW3
     @Test (expected = IllegalArgumentException.class)
-    public void updateGuestWithWrongLengthSurName() {
+    public void updateGuestWithNameWithLength51() {
         Long id = guest1.getId();
         Guest guest = guestManager.getGuestById(id);
-        guest.setSurname("NovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovépNovép"); // more than 9 digits
-        guestManager.createNewGuest(guest);
+        guest.setName("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghijA");
+        guestManager.updateGuest(guest);
+    }
+    
+    // Added HW3
+    @Test
+    public void updateGuestWithSurnameWithLength50() {
+        Long id = guest1.getId();
+        Guest guest = guestManager.getGuestById(id);
+        guest.setSurname("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghij");
+        guestManager.updateGuest(guest); // OK
+        guest = guestManager.getGuestById(id);
+        assertEquals("Jméno", guest.getName());
+        assertEquals("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghij", guest.getSurname());
+        assertEquals("123456789", guest.getIdentityCardNumber());
+        assertEquals(Gender.MALE, guest.getGender());
+    }
+    
+    // Added HW3
+    @Test (expected = IllegalArgumentException.class)
+    public void updateGuestWithSurnameWithLength51() {
+        Long id = guest1.getId();
+        Guest guest = guestManager.getGuestById(id);
+        guest.setSurname("AbcdefghijAbcdefghijAbcdefghijAbcdefghijAbcdefghijA");
+        guestManager.updateGuest(guest);
     }
     
     @Test
@@ -492,6 +555,17 @@ public class GuestManagerImplTest {
         guestManager.updateGuest(guest);
     }
     
+    // Added HW3
+    @Test (expected = IllegalArgumentException.class)
+    public void updateGuestWithUsedIdentityCardNumber() {
+        Long id1 = guest1.getId();
+        Long id2 = guest2.getId();
+        Guest g1 = guestManager.getGuestById(id1);
+        Guest g2 = guestManager.getGuestById(id2);
+        g2.setIdentityCardNumber(g1.getIdentityCardNumber()); // guest1:"123456789"
+        guestManager.updateGuest(g2);
+    }
+    
     @Test
     public void updateGuestWithSameId() {
         Long id = guest1.getId();
@@ -515,7 +589,7 @@ public class GuestManagerImplTest {
         List<Guest> expected = Arrays.asList(guest2, guest3);
         Collections.sort(guests, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
-        //assertEquals(expected, guests);//Changed
+        assertEquals(expected, guests); // Ponechano
         assertDeepEqualsCollectionGuest(expected, guests);
         // deleting all remaining guests:
         guestManager.deleteGuest(guest2);
@@ -535,6 +609,45 @@ public class GuestManagerImplTest {
     public void deleteNullGuest() {
         guestManager.deleteGuest(null);
     }
+    
+    @Test
+    public void equalsTest() {
+        
+        assertFalse(guest1.equals(null));
+        
+        guest1.setId(1L);
+        // je ekvivalentni sam se sebou (stejna adresa v pameti)? -> nechce projit
+        
+        /*
+        System.err.println("\nEquals:");
+        System.err.println("   " + guest1.getId() + " vs. " + guest1.getId());
+        System.err.println("   stejne adresy? + " + ((guest1.getId() == guest1.getId())?"ANO":"NE"));
+        System.err.println("   stejne hodnoty? + " + (guest1.getId().equals(guest1.getId())?"ANO":"NE"));
+        System.err.println("   vysledek equals: " + ((guest1.equals(guest1))?"ANO":"NE"));
+        */
+        
+        assertTrue(guest1.equals(guest1));
+        guest2.setId(1L);
+        //System.err.println(guest1.getId().toString() + " vs. " + guest2.getId().toString());
+        // je ekvivalentni 1 a 1? -> nechce projit
+        assertTrue(guest1.equals(guest2));
+        assertTrue(guest2.equals(guest1));
+        guest2.setId(2L);
+        //System.err.println(guest1.getId().toString() + " vs. " + guest2.getId().toString());
+        // je ekvivalentni 1 a 2?
+        assertFalse(guest1.equals(guest2));
+        assertFalse(guest2.equals(guest1));
+        guest2.setId(guest1.getId());
+        //System.err.println(guest1.getId().toString() + " vs. " + guest2.getId().toString());
+        // je ekvivalentni 1 a 1 (stejná adresa v paměti)? -> nechce projit
+        assertTrue(guest1.equals(guest2));
+        assertTrue(guest2.equals(guest1));
+        guest1.setId(3L);
+        //System.err.println(guest1.getId().toString() + " vs. " + guest2.getId().toString());
+        // je ekvivalentni 3 a 1?
+        assertFalse(guest1.equals(guest2));
+        assertFalse(guest2.equals(guest1));
+    }
 
     @Test
     public void findAllGuestsTest() {
@@ -542,7 +655,7 @@ public class GuestManagerImplTest {
         List<Guest> expected = Arrays.asList(guest1, guest2, guest3);
         Collections.sort(result, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
-        //assertEquals(expected, result);Changed
+        assertEquals(expected, result); // Ponechano
         assertDeepEqualsCollectionGuest(expected, result);
     }
 
@@ -550,9 +663,8 @@ public class GuestManagerImplTest {
     public void getGuestByIdTest() {
         Long id = guest1.getId();
         Guest result = guestManager.getGuestById(id);
-        System.err.println(guest1.toString());
-        System.err.println(result.toString());
-        assertDeepEqualsGuest(guest1, result); //Changed to DEEEEP
+        assertEquals(guest1, result); // Ponechano
+        assertDeepEqualsGuest(guest1, result); // Added HW3
     }
     
     @Test (expected = IllegalArgumentException.class)
@@ -565,6 +677,7 @@ public class GuestManagerImplTest {
         Guest result = guestManager.getGuestById(-1L);
     }
     
+    // Added HW3
     @Test (expected = IllegalArgumentException.class)
     public void getGuestByZeroId() {
         Guest result = guestManager.getGuestById(0L);
