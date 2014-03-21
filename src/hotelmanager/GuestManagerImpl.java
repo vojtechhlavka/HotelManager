@@ -235,10 +235,8 @@ public class GuestManagerImpl implements GuestManager {
     }
     
     public Long getGuestWithGivenIdentityCard(String number) {
-        PreparedStatement st = null;
-        try {
-            st = conn.prepareStatement(
-                    "SELECT id,name, surname, identityCardNumber, gender FROM guest WHERE identityCardNumber = ?");
+        try (PreparedStatement st = conn.prepareStatement(
+                    "SELECT id,name, surname, identityCardNumber, gender FROM guest WHERE identityCardNumber = ?")) {
             st.setString(1, number);
             ResultSet rs = st.executeQuery();
             
@@ -259,14 +257,6 @@ public class GuestManagerImpl implements GuestManager {
         } catch (SQLException ex) {
             throw new ServiceFailureException(
                     "Error when retrieving room with number " + number, ex);
-        } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
         }
     }
 
