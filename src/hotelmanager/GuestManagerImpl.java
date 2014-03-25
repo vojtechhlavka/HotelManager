@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
  */
 public class GuestManagerImpl implements GuestManager {
     public static final Logger logger = Logger.getLogger(GuestManagerImpl.class.getName());
+    public static final String NAME_EXPR = "[a-zA-Z[ěščřžýáíéůú]*]+";
+    public static final String CARD_NUMBER_EXPR = "[0-9]{9}";
     private Connection conn;
     
     public GuestManagerImpl(Connection conn) {
@@ -41,73 +43,11 @@ public class GuestManagerImpl implements GuestManager {
             throw new IllegalArgumentException("Id of guest is already is set");
         }
         
-        if(guest.getName() == null) {
-            throw new IllegalArgumentException("Name of guest is null");
-        }
+        validateCreateUpdate(guest);
         
-        if(guest.getSurname() == null) {
-            throw new IllegalArgumentException("Surname of guest is null");
-        }
-        
-        if(guest.getIdentityCardNumber() == null) {
-            throw new IllegalArgumentException("IdentityCardNumber of guest is null");
-        }
-        
-        if(guest.getGender() == null) {
-            throw new IllegalArgumentException("Gender of guest is null");
-        }
-        
-        if(guest.getName().replaceAll("\\s", "").length() == 0) {
-            throw new IllegalArgumentException("Name of guest has zero length");
-        }
-        
-        if(guest.getSurname().replaceAll("\\s", "").length() == 0) {
-            throw new IllegalArgumentException("Surname of guest has zero length");
-        }
-        
-        if(guest.getIdentityCardNumber().replaceAll("\\s", "").length() < 9) {
-            throw new IllegalArgumentException("IdentityCardNumber of guest has shorter length than 9");
-        }
-        
-        if(guest.getName().replaceAll("\\s", "").length() > 50) {
-            throw new IllegalArgumentException("Name of guest has longer length than 50");
-        }
-        
-        if(guest.getSurname().replaceAll("\\s", "").length() > 50) {
-            throw new IllegalArgumentException("Surname of guest has longer length than 50");
-        }
-        
-        if(guest.getIdentityCardNumber().replaceAll("\\s", "").length() > 9) {
-            throw new IllegalArgumentException("IdentityCardNumber of guest has longer length than 9");
-        }
-        
-        Pattern p = Pattern.compile("[a-zA-Z[ěščřžýáíéůú]*]+");
-        Matcher m = p.matcher(guest.getName());
-        if( !m.find() ) {
-            throw new IllegalArgumentException("Name contains wrong character");
-        }
-        m = p.matcher(guest.getSurname());
-        if( !m.find() ) {
-            throw new IllegalArgumentException("Surname contains wrong character");
-        }
-        
-        p = Pattern.compile("[0-9]{9}");
-        m = p.matcher(guest.getIdentityCardNumber());
-        if( !m.find() ) {
-            throw new IllegalArgumentException("IdentitycardNumber must contains only character [0-9]");
-        }
-        if(guest.getIdentityCardNumber().equals("000000000")) {
-            throw new IllegalArgumentException("IdentitycardNumber can not be 000000000");
-        }
-        
-        if( Arrays.asList(Gender.values()).contains(guest.getGender()) == false ) {
-            throw new IllegalArgumentException("Gender must be MALE or FEMALE");
-        }
-        
-        if(getGuestWithGivenIdentityCard(guest.getIdentityCardNumber().toString()) != null )  {
+        if(getGuestIdWithGivenIdentityCard(guest.getIdentityCardNumber().toString()) != null )  {
             throw new IllegalArgumentException("Guest with this Number IdentityCard exists already");
-        }
-                
+        }                
         
         try(PreparedStatement st = conn.prepareStatement(
                 "INSERT INTO guest (name, surname, identityCardNumber, gender) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
@@ -119,11 +59,12 @@ public class GuestManagerImpl implements GuestManager {
             int addedRows = st.executeUpdate();
             
             if(addedRows != 1) { //pridan jeden radek
-                throw new ServiceFailureException("Internal Error: More rows inserted when trying to insert guest " + guest);
+                throw new ServiceFailureException("Internal Error: More rows( addedRows:"+ addedRows + ") inserted when trying to insert guest " + guest);
             }
             
-            ResultSet rs = st.getGeneratedKeys();
-            guest.setId(getKey(rs, guest));
+            try(ResultSet rs = st.getGeneratedKeys()) {
+                guest.setId(getKey(rs, guest));
+            }
             
         } catch(SQLException ex) {
             throw new ServiceFailureException("Error when inserting guest " + guest, ex);
@@ -144,72 +85,9 @@ public class GuestManagerImpl implements GuestManager {
             throw new IllegalArgumentException("Guest id must be positive");
         }
         
-        if(guest.getName() == null) {
-            throw new IllegalArgumentException("Name of guest is null");
-        }
+        validateCreateUpdate(guest);       
         
-        if(guest.getSurname() == null) {
-            throw new IllegalArgumentException("Surname of guest is null");
-        }
-        
-        if(guest.getIdentityCardNumber() == null) {
-            throw new IllegalArgumentException("IdentityCardNumber of guest is null");
-        }
-        
-        if(guest.getGender() == null) {
-            throw new IllegalArgumentException("Gender of guest is null");
-        }
-        
-        if(guest.getName().replaceAll("\\s", "").length() == 0) {
-            throw new IllegalArgumentException("Name of guest has zero length");
-        }
-        
-        if(guest.getSurname().replaceAll("\\s", "").length() == 0) {
-            throw new IllegalArgumentException("Surname of guest has zero length");
-        }
-        
-        if(guest.getIdentityCardNumber().replaceAll("\\s", "").length() < 9) {
-            throw new IllegalArgumentException("IdentityCardNumber of guest has shorter length than 9");
-        }
-        
-        if(guest.getName().replaceAll("\\s", "").length() > 50) {
-            throw new IllegalArgumentException("Name of guest has longer length than 50");
-        }
-        
-        if(guest.getSurname().replaceAll("\\s", "").length() > 50) {
-            throw new IllegalArgumentException("Surname of guest has longer length than 50");
-        }
-        
-        if(guest.getIdentityCardNumber().replaceAll("\\s", "").length() > 9) {
-            throw new IllegalArgumentException("IdentityCardNumber of guest has longer length than 9");
-        }
-        
-        Pattern p = Pattern.compile("[a-zA-Z[ěščřžýáíéůú]*]+");
-        Matcher m = p.matcher(guest.getName());
-        if( !m.find() ) {
-            throw new IllegalArgumentException("Name contains wrong character");
-        }
-        m = p.matcher(guest.getSurname());
-        if( !m.find() ) {
-            throw new IllegalArgumentException("Surname contains wrong character");
-        }
-        
-        p = Pattern.compile("[0-9]{9}");
-        m = p.matcher(guest.getIdentityCardNumber());
-        if( !m.find() ) {
-            throw new IllegalArgumentException("IdentitycardNumber must contains only character [0-9]");
-        }
-        if(guest.getIdentityCardNumber().equals("000000000")) {
-            throw new IllegalArgumentException("IdentitycardNumber can not be 000000000");
-        }
-        
-        if( Arrays.asList(Gender.values()).contains(guest.getGender()) == false ) {
-            throw new IllegalArgumentException("Gender must be MALE or FEMALE");
-        }
-        
-        
-        
-        Long tmp = getGuestWithGivenIdentityCard(guest.getIdentityCardNumber());
+        Long tmp = getGuestIdWithGivenIdentityCard(guest.getIdentityCardNumber());
         if(tmp != null && tmp != guest.getId()) { // exists room with different ID but same number
             // ID cannot be changed
             throw new IllegalArgumentException("Another guest with given identityCardNumber "
@@ -225,7 +103,7 @@ public class GuestManagerImpl implements GuestManager {
             st.setLong(5, guest.getId());
             int updatedGuest = st.executeUpdate();
             if(updatedGuest != 1) {
-                throw new ServiceFailureException("Internal Error: More rows "
+                throw new ServiceFailureException("Internal Error: More rows( updatedGuest:"+ updatedGuest + ") "
                         + "updated when trying to update guest " + guest);
             }
         } catch(SQLException ex) {
@@ -234,32 +112,6 @@ public class GuestManagerImpl implements GuestManager {
         
     }
     
-    public Long getGuestWithGivenIdentityCard(String number) {
-        try (PreparedStatement st = conn.prepareStatement(
-                    "SELECT id,name, surname, identityCardNumber, gender FROM guest WHERE identityCardNumber = ?")) {
-            st.setString(1, number);
-            ResultSet rs = st.executeQuery();
-            
-            if (rs.next()) {
-                Guest guest = newGuestFromResult(rs);
-
-                if (rs.next()) {
-                    throw new ServiceFailureException(
-                            "Internal error: More entities with the same identityCardNumber found "
-                            + "(source number: " + number + ", found " + guest + " and " + newGuestFromResult(rs));                    
-                }            
-                
-                return guest.getId(); // vrátí ID daného pokoje (kontrakt)
-            } else {
-                return null; // pokoj s danym cislem neexistuje (kontrakt)
-            }
-            
-        } catch (SQLException ex) {
-            throw new ServiceFailureException(
-                    "Error when retrieving room with number " + number, ex);
-        }
-    }
-
     @Override
     public void deleteGuest(Guest guest) {
         if(guest == null) {
@@ -284,7 +136,7 @@ public class GuestManagerImpl implements GuestManager {
             int delteRow = st.executeUpdate();
             
             if(delteRow != 1 ){
-                throw new ServiceFailureException("Internal Error: More rows "
+                throw new ServiceFailureException("Internal Error: More rows( deletedRows:"+ delteRow + ") "
                         + "deleted when trying to delete guest " + guest);
             }
         } catch(SQLException ex) {
@@ -296,11 +148,13 @@ public class GuestManagerImpl implements GuestManager {
     public List<Guest> findAllGuests() {
         try(PreparedStatement st = conn.prepareStatement(
                 "SELECT id, name, surname, identityCardNumber, gender FROM guest")) {
-            ResultSet rs = st.executeQuery();
             
             List<Guest> guests = new ArrayList<Guest>();
-            while(rs.next()) {
-                guests.add(newGuestFromResult(rs));
+           
+            try(ResultSet rs = st.executeQuery()) {
+                while(rs.next()) {
+                    guests.add(newGuestFromResult(rs));
+                }
             }
             
             return guests;
@@ -322,19 +176,20 @@ public class GuestManagerImpl implements GuestManager {
         try(PreparedStatement st = conn.prepareStatement(
                 "SELECT id, name, surname, identityCardNumber, gender FROM guest WHERE id = ?")) {
             st.setLong(1, id);
-            ResultSet rs = st.executeQuery();
             
-            if(rs.next()) {
-                Guest guest = newGuestFromResult(rs);
-                
+            try(ResultSet rs = st.executeQuery()) {            
                 if(rs.next()) {
-                    throw new IllegalArgumentException("Internal error: More entities with the same id found "
-                            + "(source id: " + id + ", found " + guest + " and " + newGuestFromResult(rs));     
+                    Guest guest = newGuestFromResult(rs);
+
+                    if(rs.next()) {
+                        throw new IllegalArgumentException("Internal error: More entities with the same id found "
+                                + "(source id: " + id + ", found " + guest + " and " + newGuestFromResult(rs));     
+                    }
+
+                    return guest;                
+                } else {
+                    throw new IllegalArgumentException("For id " + id + "wan not found guest");
                 }
-                
-                return guest;                
-            } else {
-                throw new IllegalArgumentException("For id " + id + "wan not found guest");
             }
             
         } catch(SQLException ex) {
@@ -355,6 +210,36 @@ public class GuestManagerImpl implements GuestManager {
         return guest;
     }
 
+    private Long getGuestIdWithGivenIdentityCard(String number) {
+        try (PreparedStatement st = conn.prepareStatement(
+                    "SELECT id,name, surname, identityCardNumber, gender FROM guest WHERE identityCardNumber = ?")) {
+            st.setString(1, number);
+            try(ResultSet rs = st.executeQuery()) {
+            
+            
+                if (rs.next()) {
+                    Guest guest = newGuestFromResult(rs);
+
+                    if (rs.next()) {
+                        throw new ServiceFailureException(
+                                "Internal error: More entities with the same identityCardNumber found "
+                                + "(source number: " + number + ", found " + guest + " and " + newGuestFromResult(rs));                    
+                    }            
+
+                    return guest.getId(); // vrátí ID daného pokoje (kontrakt)
+                } else {
+                    return null; // pokoj s danym cislem neexistuje (kontrakt)
+                }
+            } catch (ServiceFailureException ex) {
+                throw new ServiceFailureException(ex);
+            }
+            
+        } catch (SQLException ex) {
+            throw new ServiceFailureException(
+                    "Internal error: " + number, ex);
+        }
+    }
+    
     private Long getKey(ResultSet rs, Guest guest) throws SQLException, ServiceFailureException {
         if(rs.next()) {
             if(rs.getMetaData().getColumnCount() != 1) {
@@ -373,6 +258,69 @@ public class GuestManagerImpl implements GuestManager {
             throw new ServiceFailureException("Internal Error: Generated key"
                     + "retriving failed when trying to insert grave " + guest
                     + " - no key found");
+        }
+    }
+
+    private void validateCreateUpdate(Guest guest) throws IllegalArgumentException {
+        if(guest.getName() == null) {
+            throw new IllegalArgumentException("Name of guest is null");
+        }
+        
+        if(guest.getSurname() == null) {
+            throw new IllegalArgumentException("Surname of guest is null");
+        }
+        
+        if(guest.getIdentityCardNumber() == null) {
+            throw new IllegalArgumentException("IdentityCardNumber of guest is null");
+        }
+        
+        if(guest.getGender() == null) {
+            throw new IllegalArgumentException("Gender of guest is null");
+        }
+        
+        if(guest.getName().replaceAll("\\s", "").length() == 0) {
+            throw new IllegalArgumentException("Name of guest has zero length");
+        }
+        
+        if(guest.getSurname().replaceAll("\\s", "").length() == 0) {
+            throw new IllegalArgumentException("Surname of guest has zero length");
+        }
+        
+        if(guest.getIdentityCardNumber().replaceAll("\\s", "").length() < 9) {
+            throw new IllegalArgumentException("IdentityCardNumber of guest has shorter length than 9");
+        }
+        
+        if(guest.getName().replaceAll("\\s", "").length() > 50) {
+            throw new IllegalArgumentException("Name of guest has longer length than 50");
+        }
+        
+        if(guest.getSurname().replaceAll("\\s", "").length() > 50) {
+            throw new IllegalArgumentException("Surname of guest has longer length than 50");
+        }
+        
+        if(guest.getIdentityCardNumber().replaceAll("\\s", "").length() > 9) {
+            throw new IllegalArgumentException("IdentityCardNumber of guest has longer length than 9");
+        }
+        
+        if (!guest.getName().matches(NAME_EXPR)) {
+            throw new IllegalArgumentException("Name contains wrong character");
+        }
+        
+        if (!guest.getSurname().matches(NAME_EXPR)) {
+            throw new IllegalArgumentException("Surname contains wrong character");
+        }
+        
+        if (!guest.getIdentityCardNumber().matches(CARD_NUMBER_EXPR)) {
+            throw new IllegalArgumentException("IdentitycardNumber must contains only character [0-9]");
+        }
+        
+        
+        if(guest.getIdentityCardNumber().equals("000000000")) {
+            throw new IllegalArgumentException("IdentitycardNumber can not be 000000000");
+        }
+        
+        if( !Arrays.asList(Gender.values()).contains(guest.getGender()) ) { // DEF MUZE ENUM MIT JEN HODNOTY Z ENUMU -KONTROLOVAT ZDA NENI NULL
+            throw new IllegalArgumentException("Gender must be MALE or FEMALE");
         }
     }
 }
