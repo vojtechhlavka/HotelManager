@@ -11,6 +11,7 @@ import java.util.List;
 //import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 //import java.util.logging.SimpleFormatter;
 
 /**
@@ -21,10 +22,11 @@ import java.util.logging.Logger;
 public class RoomManagerImpl implements RoomManager {
     
     public static final Logger logger = Logger.getLogger(RoomManagerImpl.class.getName());
-    private Connection connection;
+    //private Connection connection;
+    private DataSource dataSource;
     
     public RoomManagerImpl(Connection connection) /*throws IOException*/ {
-        this.connection = connection;
+        ; //this.connection = connection;
         
         /*
         //logger.addHandler(new FileHandler("Logging.txt"));
@@ -36,6 +38,17 @@ public class RoomManagerImpl implements RoomManager {
         
         //logger.log(Level.SEVERE, "zpráva");
         */
+    }
+    
+    public void setDataSource(DataSource dataSource) throws SQLException {
+        this.dataSource = dataSource;
+        ; //connection = dataSource.getConnection();
+    }
+    
+    private void checkDataSource() {
+        if (dataSource == null) {
+            throw new IllegalStateException("DataSource is not set");
+        }
     }
     
     public RoomManagerImpl() /*for now kvuli chybe*/ {
@@ -54,24 +67,10 @@ public class RoomManagerImpl implements RoomManager {
             throw new IllegalArgumentException("ID of room is already set");
         }
         
-        if(room.getCapacity() <= 0) {
-            throw new IllegalArgumentException("Capacity of room must be a positive number");
-        }
-        
-        if(room.getFloor() < 0) {
-            throw new IllegalArgumentException("Floor of room must be a non-negative number");
-        }
-        
-        if(room.getNumber() <= 0) {
-            throw new IllegalArgumentException("Number of room must be a positive number");
-        }
+        validate(room);
         
         if(getRoomWithGivenNumber(room.getNumber()) != null) {
             throw new IllegalArgumentException("Room with given number already exists");
-        }
-        
-        if(room.getNote().length() > 255) {
-            throw new IllegalArgumentException("The note is too long");
         }
         
         /*
@@ -80,27 +79,38 @@ public class RoomManagerImpl implements RoomManager {
         }
         */
         
+        checkDataSource();
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = connection.prepareStatement(
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement(
                     "INSERT INTO ROOM (capacity,floor,number,note) VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, room.getCapacity());
             st.setInt(2, room.getFloor());
             st.setInt(3, room.getNumber());
             st.setString(4, room.getNote());
-            int addedRows = st.executeUpdate();
-            if (addedRows != 1) {
-                throw new ServiceFailureException("Internal Error: More rows "
-                        + "inserted when trying to insert room " + room);
-            }            
             
-            ResultSet keyRS = st.getGeneratedKeys();
-            room.setId(getKey(keyRS,room));
+            int count = st.executeUpdate();
+            //if (count != 1) {
+            //    throw new ServiceFailureException("Internal Error: More rows "
+            //            + "inserted when trying to insert room " + room);
+            //}            
+            //ResultSet keyRS = st.getGeneratedKeys();
+            //room.setId(getKey(keyRS,room));
+            DBUtils.checkUpdatesCount(count, room, true);
+            Long id = DBUtils.getId(st.getGeneratedKeys());
+            room.setId(id);
+            conn.commit();
             
         } catch (SQLException ex) {
-            throw new ServiceFailureException("Error when inserting room " + room, ex);
+            String msg = "Error when inserting room " + room.toString();
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
+            /*
             if (st != null) {
                 try {
                     st.close();
@@ -108,6 +118,9 @@ public class RoomManagerImpl implements RoomManager {
                     logger.log(Level.SEVERE, null, ex);
                 }
             }
+            */
+            DBUtils.doRollbackQuietly(conn);
+            DBUtils.closeQuietly(conn, st);
         }
     }
     
@@ -148,21 +161,7 @@ public class RoomManagerImpl implements RoomManager {
             throw new IllegalArgumentException("ID of room must be a positive integer");
         }
         
-        if(room.getCapacity() <= 0) {
-            throw new IllegalArgumentException("Capacity of room must be a positive number");
-        }
-        
-        if(room.getFloor() < 0) {
-            throw new IllegalArgumentException("Floor of room must be a non-negative number");
-        }
-        
-        if(room.getNumber() <= 0) {
-            throw new IllegalArgumentException("Number of room must be a positive number");
-        }
-        
-        if(room.getNote().length() > 255) {
-            throw new IllegalArgumentException("The note is too long");
-        }
+        validate(room);
         
         Long tmp = getRoomWithGivenNumber(room.getNumber());
         if(tmp != null && tmp != room.getId()) { // exists room with different ID but same number
@@ -177,9 +176,13 @@ public class RoomManagerImpl implements RoomManager {
         }
         */
         
+        checkDataSource();
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = connection.prepareStatement(
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement(
                     "UPDATE room SET capacity=?,floor=?,number=?,note=? " + 
                     "WHERE id = ?");
             st.setInt(1, room.getCapacity());
@@ -188,14 +191,22 @@ public class RoomManagerImpl implements RoomManager {
             st.setString(4, room.getNote());
             st.setLong(5, room.getId());
             
+            /*
             int updatedRows = st.executeUpdate();
             if (updatedRows != 1) {
                 throw new ServiceFailureException("Internal Error: More rows "
                         + "updated when trying to update room " + room);
             }
+            */
+            int count = st.executeUpdate();
+            DBUtils.checkUpdatesCount(count, room, false);
+            conn.commit();
         } catch (SQLException ex) {
-            throw new ServiceFailureException("Error when updating room " + room, ex);
+            String msg = "Error when updating room " + room.toString();
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
+            /*
             if (st != null) {
                 try {
                     st.close();
@@ -203,6 +214,9 @@ public class RoomManagerImpl implements RoomManager {
                     logger.log(Level.SEVERE, null, ex);
                 }
             }
+            */
+            DBUtils.doRollbackQuietly(conn);
+            DBUtils.closeQuietly(conn, st);
         }
     }
     
@@ -213,9 +227,12 @@ public class RoomManagerImpl implements RoomManager {
      * @returns ID of room with given number or null when such room does not exists
     */
     public Long getRoomWithGivenNumber(int number) {
+        checkDataSource();
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = connection.prepareStatement(
+            conn = dataSource.getConnection();
+            st = conn.prepareStatement(
                     "SELECT id,capacity,floor,number,note FROM room WHERE number = ?");
             st.setInt(1, number);
             ResultSet rs = st.executeQuery();
@@ -235,9 +252,11 @@ public class RoomManagerImpl implements RoomManager {
             }
             
         } catch (SQLException ex) {
-            throw new ServiceFailureException(
-                    "Error when retrieving room with number " + number, ex);
+            String msg = "Error when retrieving room with number " + number;
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
+            /*
             if (st != null) {
                 try {
                     st.close();
@@ -245,6 +264,9 @@ public class RoomManagerImpl implements RoomManager {
                     logger.log(Level.SEVERE, null, ex);
                 }
             }
+            */
+            //-----------------------DBUtils.doRollbackQuietly(conn);
+            DBUtils.closeQuietly(conn, st);
         }
     }
 
@@ -266,20 +288,32 @@ public class RoomManagerImpl implements RoomManager {
         
         // overovani zda dany pokoj vubec existuje???
         
+        checkDataSource();
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = connection.prepareStatement(
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement(
                     "DELETE FROM room WHERE id = ?");
             st.setLong(1, room.getId());
             
+            /*
             int deletedRows = st.executeUpdate();
             if (deletedRows != 1) {
                 throw new ServiceFailureException("Internal Error: More rows "
                         + "deleted when trying to delete room " + room);
             }
+            */
+            int count = st.executeUpdate();
+            DBUtils.checkUpdatesCount(count, room, false);
+            conn.commit();
         } catch (SQLException ex) {
-            throw new ServiceFailureException("Error when deleting room " + room, ex);
+            String msg = "Error when deleting room " + room.toString();
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
+            /*
             if (st != null) {
                 try {
                     st.close();
@@ -287,6 +321,9 @@ public class RoomManagerImpl implements RoomManager {
                     logger.log(Level.SEVERE, null, ex);
                 }
             }
+            */
+            DBUtils.doRollbackQuietly(conn);
+            DBUtils.closeQuietly(conn, st);
         }
     }
 
@@ -294,9 +331,12 @@ public class RoomManagerImpl implements RoomManager {
     public List<Room> findAllRooms() {
         // throw new UnsupportedOperationException("Not supported yet.");
         
+        checkDataSource();
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = connection.prepareStatement(
+            conn = dataSource.getConnection();
+            st = conn.prepareStatement(
                     "SELECT id,capacity,floor,number,note FROM room");
             ResultSet rs = st.executeQuery();
             
@@ -310,6 +350,7 @@ public class RoomManagerImpl implements RoomManager {
             throw new ServiceFailureException(
                     "Error when retrieving all room", ex);
         } finally {
+            /*
             if (st != null) {
                 try {
                     st.close();
@@ -317,6 +358,8 @@ public class RoomManagerImpl implements RoomManager {
                     logger.log(Level.SEVERE, null, ex);
                 }
             }
+            */
+            DBUtils.closeQuietly(conn, st);
         }
     }
     
@@ -342,13 +385,16 @@ public class RoomManagerImpl implements RoomManager {
             throw new IllegalArgumentException("ID must be a positive integer");
         }
         
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = connection.prepareStatement(
+            conn = dataSource.getConnection();
+            st = conn.prepareStatement(
                     "SELECT id,capacity,floor,number,note FROM room WHERE id = ?");
             st.setLong(1, id);
-            ResultSet rs = st.executeQuery();
             
+            /*
+            ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 Room room = restoreRoomFromResultSet(rs);
 
@@ -362,11 +408,15 @@ public class RoomManagerImpl implements RoomManager {
             } else {
                 return null; // testy vyzaduji "null"
             }
+            */
+            return executeQueryForSingleRoom(st);
             
         } catch (SQLException ex) {
-            throw new ServiceFailureException(
-                    "Error when retrieving room with id " + id, ex);
+            String msg = "Error when getting room with id = " + id + " from DB";
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
+            /*
             if (st != null) {
                 try {
                     st.close();
@@ -374,6 +424,62 @@ public class RoomManagerImpl implements RoomManager {
                     logger.log(Level.SEVERE, null, ex);
                 }
             }
+            */
+            DBUtils.closeQuietly(conn, st);
         }
     }
+    
+    
+    static Room executeQueryForSingleRoom(PreparedStatement st) throws SQLException, ServiceFailureException {
+        ResultSet rs = st.executeQuery();
+        if (rs.next()) {
+            Room result = rowToRoom(rs);                
+            if (rs.next()) {
+                throw new ServiceFailureException(
+                        "Internal integrity error: more rooms with the same id found!");
+            }
+            return result;
+        } else {
+            return null;
+        }
+    }
+
+    static List<Room> executeQueryForMultipleRooms(PreparedStatement st) throws SQLException {
+        ResultSet rs = st.executeQuery();
+        List<Room> result = new ArrayList<Room>();
+        while (rs.next()) {
+            result.add(rowToRoom(rs));
+        }
+        return result;
+    }
+    
+    private static Room rowToRoom(ResultSet rs) throws SQLException {
+        Room result = new Room();
+        result.setId(rs.getLong("id"));
+        result.setCapacity(rs.getInt("capacity"));
+        result.setFloor(rs.getInt("floor"));
+        result.setNumber(rs.getInt("number"));
+        result.setNote(rs.getString("note"));
+        return result;
+    }
+    
+    private static void validate(Room room) throws IllegalArgumentException {
+        
+        if(room.getNote().length() > 255) {
+            throw new IllegalArgumentException("The note is too long");
+        }
+        
+        if(room.getFloor() < 0) {
+            throw new IllegalArgumentException("Floor of room must be a non-negative number");
+        }
+        
+        if(room.getNumber() <= 0) {
+            throw new IllegalArgumentException("Number of room must be a positive number");
+        }
+        
+        if(room.getCapacity() <= 0) {
+            throw new IllegalArgumentException("Capacity of room must be a positive number");
+        }
+    }
+
 }

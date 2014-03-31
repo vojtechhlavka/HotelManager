@@ -1,9 +1,11 @@
 package hotelmanagertests;
 
+import hotelmanager.DBUtils;
 import hotelmanager.Gender;
 import hotelmanager.Guest;
 import hotelmanager.GuestComparator;
 import hotelmanager.GuestManagerImpl;
+import hotelmanager.HotelManager;
 import hotelmanager.HotelManagerImpl;
 import hotelmanager.Room;
 import hotelmanager.RoomComparator;
@@ -14,9 +16,15 @@ import static hotelmanagertests.RoomManagerImplTest.newRoom;
 import static hotelmanagertests.GuestManagerImplTest.assertDeepEqualsGuest;
 import static hotelmanagertests.GuestManagerImplTest.assertDeepEqualsCollectionGuest;
 import static hotelmanagertests.GuestManagerImplTest.newGuest;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.sql.DataSource;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.junit.After;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -33,24 +41,35 @@ public class HotelManagerImplTest {
     private GuestManagerImpl guestM;
     private Room r1, r2, r3;
     private Guest g1, g2, g3, g4, g5;
+    private DataSource ds;
 
-    /**
-     * Method to Inicializate before each Test
-     * 
-     * @author Petr
-     */
+    private static DataSource prepareDataSource() throws SQLException {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl("jdbc:derby:memory:HotelManagerDatabaseTest;create=true");
+        return ds;
+    }
+    
+    
     @Before
-    public void setUp() {
+    public void setUp()  throws SQLException {
+        ds = prepareDataSource();
+        DBUtils.executeSqlScript(ds, HotelManager.class.getResource("createTables.sql"));
+        
         this.manager = new HotelManagerImpl();
-        this.roomM = new RoomManagerImpl();
+        this.manager.setDataSource(ds);
         this.guestM = new GuestManagerImpl();
+        this.guestM.setDataSource(ds);
+        this.roomM = new RoomManagerImpl();
+        this.roomM.setDataSource(ds);
+        
+        
         
         r1 = newRoom(5, 1, 1, "Nice room.");
         r2 = newRoom(3, 1, 2, "Great room with good smelt.");
         r3 = newRoom(4, 1, 3, "Bad room.");
         g1 = newGuest("Jaroslav", "Šlechtický", "123456789", Gender.MALE);
         g2 = newGuest("Klára", "Malinká", "453456789", Gender.FEMALE);
-        g3 = newGuest("Václav", "Veliká", "123456789", Gender.MALE);
+        g3 = newGuest("Václav", "Veliká", "127456789", Gender.MALE);
         g4 = newGuest("Petr", "Nedržbach", "345456789", Gender.MALE);
         g5 = newGuest("Jana", "Horšová", "456789789", Gender.FEMALE);
         
@@ -62,6 +81,11 @@ public class HotelManagerImplTest {
         roomM.createNewRoom(r1);
         roomM.createNewRoom(r2);
         roomM.createNewRoom(r3);
+    }
+    
+    @After
+    public void tearDown() throws SQLException {
+        DBUtils.executeSqlScript(ds, HotelManager.class.getResource("dropTables.sql"));
     }
 
     
@@ -504,19 +528,19 @@ public class HotelManagerImplTest {
      */
     @Test
     public void findAllFreeRoomsWithFullRoomTest() {
-        Guest g6 = newGuest("Jana", "Horšová", "456789789", Gender.FEMALE);        
+        Guest g6 = newGuest("Jana", "Horšová", "456789189", Gender.FEMALE);        
         guestM.createNewGuest(g6);
-        Guest g7 = newGuest("Janaa", "Horšaová", "476789789", Gender.FEMALE);        
+        Guest g7 = newGuest("Janaa", "Horšaová", "476181789", Gender.FEMALE);        
         guestM.createNewGuest(g7);
-        Guest g8 = newGuest("Janaaa", "Horšovaá", "419789789", Gender.FEMALE);        
+        Guest g8 = newGuest("Janaaa", "Horšovaá", "419189789", Gender.FEMALE);        
         guestM.createNewGuest(g8);
-        Guest g9 = newGuest("Petr", "Horš", "719789789", Gender.MALE);        
+        Guest g9 = newGuest("Petr", "Horš", "719789719", Gender.MALE);        
         guestM.createNewGuest(g9);
-        Guest g10 = newGuest("Pavel", "Horš", "789789789", Gender.MALE);        
+        Guest g10 = newGuest("Pavel", "Horš", "781789789", Gender.MALE);        
         guestM.createNewGuest(g10);
-        Guest g11 = newGuest("Pavela", "Horšaa", "789789781", Gender.MALE);        
+        Guest g11 = newGuest("Pavela", "Horšaa", "789189781", Gender.MALE);        
         guestM.createNewGuest(g11);
-        Guest g12 = newGuest("Pavelaa", "Horša", "789789782", Gender.MALE);        
+        Guest g12 = newGuest("Pavelaa", "Horša", "789789712", Gender.MALE);        
         guestM.createNewGuest(g12);
         
         manager.accommodateGuestInRoom(g1, r2);

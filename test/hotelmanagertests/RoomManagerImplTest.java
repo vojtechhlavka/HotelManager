@@ -1,5 +1,6 @@
 package hotelmanagertests;
 
+import hotelmanager.DBUtils;
 import hotelmanager.Room;
 import hotelmanager.RoomComparator;
 import hotelmanager.RoomManagerImpl;
@@ -10,6 +11,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.sql.DataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 
 import org.junit.Before;
@@ -25,12 +28,21 @@ public class RoomManagerImplTest {
     private RoomManagerImpl manager;
     private Room r1, r2, r3;
     
-    private Connection connection;
+    //private Connection connection;
+    private DataSource ds;
+    
+    private static DataSource prepareDataSource() throws SQLException {
+        BasicDataSource ds = new BasicDataSource();
+        //we will use in memory database
+        ds.setUrl("jdbc:derby:memory:HotelManagerTest;create=true");
+        return ds;
+    }
 
     @Before
     public void setUp() throws SQLException {
         //--String url = "jdbc:derby://localhost:1527/HotelManagerDatabaseDemo;create=true";
         //--connection = DriverManager.getConnection(url, "HotelManager", "zFTY3Mv5GgZdiS");
+        /*
         connection = DriverManager.getConnection("jdbc:derby:memory:HotelManagerDatabaseTest;create=true");
         connection.prepareStatement("CREATE TABLE ROOM ("
                 + "id bigint primary key generated always as identity,"
@@ -41,6 +53,12 @@ public class RoomManagerImplTest {
         
         //--this.manager = new RoomManagerImpl();
         manager = new RoomManagerImpl(connection);
+        */
+        
+        ds = prepareDataSource();
+        DBUtils.executeSqlScript(ds, RoomManagerImpl.class.getResource("createTables.sql"));
+        manager = new RoomManagerImpl();
+        manager.setDataSource(ds);
 
         r1 = newRoom(5, 1, 1, "Nice room.");
         r2 = newRoom(5, 1, 2, "Great room with good smelt.");
@@ -49,9 +67,13 @@ public class RoomManagerImplTest {
     
     @After
     public void tearDown() throws SQLException {
+        /*
         connection.prepareStatement("DROP TABLE ROOM").executeUpdate();        
         connection.close();
+        */
+        DBUtils.executeSqlScript(ds, RoomManagerImpl.class.getResource("dropTables.sql"));
     }
+
 
     @Test
     public void createNewRoomTest() {

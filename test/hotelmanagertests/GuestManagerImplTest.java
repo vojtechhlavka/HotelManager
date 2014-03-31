@@ -7,21 +7,25 @@ package hotelmanagertests;
  */
 
 
+import hotelmanager.DBUtils;
 import hotelmanager.Gender;
 import hotelmanager.Guest;
 import hotelmanager.GuestComparator;
 import hotelmanager.GuestManagerImpl;
+import hotelmanager.HotelManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.sql.DataSource;
 import org.junit.After;
 
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.apache.commons.dbcp.BasicDataSource;
 
 /**
  *
@@ -31,20 +35,22 @@ public class GuestManagerImplTest {
 
     private GuestManagerImpl guestManager;
     private Guest guest1, guest2, guest3;
-    private Connection conn;
+    private DataSource ds;
 
+    private static DataSource prepareDataSource() throws SQLException {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl("jdbc:derby:memory:HotelManagerDatabaseTest;create=true");
+        return ds;
+    }
+    
     @Before
     public void setUp() throws SQLException{
-        conn = DriverManager.getConnection("jdbc:derby:memory:HotelManagerDatabaseTest;create=true");
-        conn.prepareStatement("CREATE TABLE guest ("
-                + "id bigint primary key generated always as identity,"
-                + "name varchar(50),"
-                + "surname varchar(50),"
-                + "identityCardNumber varchar(9),"
-                + "gender varchar(6))"
-        ).executeUpdate();
+        ds = prepareDataSource();
+                
+        guestManager = new GuestManagerImpl();
+        guestManager.setDataSource(ds);
         
-        guestManager = new GuestManagerImpl(conn);
+        DBUtils.executeSqlScript(ds, HotelManager.class.getResource("createTables.sql"));
         
         guest1 = newGuest("Jméno", "Příjmení", "123456789", Gender.MALE);
         guest2 = newGuest("JménoB", "PříjmeníB", "987654321", Gender.FEMALE);
@@ -56,8 +62,7 @@ public class GuestManagerImplTest {
     
     @After
     public void tearDown() throws SQLException {
-        conn.prepareStatement("DROP TABLE guest").executeUpdate();
-        conn.close();
+         DBUtils.executeSqlScript(ds, HotelManager.class.getResource("dropTables.sql"));
     }
 
     @Test
