@@ -31,7 +31,10 @@ public class HotelManagerImpl implements HotelManager {
             throw new IllegalStateException("DataSource is not set");
         }
     }
-        
+    
+    /**
+     * @autor Vojta 
+     */
     @Override
     public void accommodateGuestInRoom(Guest guest, Room room) {
         //throw new UnsupportedOperationException("Not supported yet.");
@@ -97,6 +100,9 @@ public class HotelManagerImpl implements HotelManager {
         }
     }
     
+    /**
+     * @author Vojta
+     */
     private static void checkIfRoomHasSpace(Connection conn, Room room) throws IllegalArgumentException, SQLException {
         PreparedStatement st = null;
         try {
@@ -136,7 +142,10 @@ public class HotelManagerImpl implements HotelManager {
             // Nee!! st jeste bude potřeba v materske metode
         }
     }
-
+    
+    /**
+     * @author Petr
+     */
     @Override
     public void removeGuestFromRoom(Guest guest, Room room) {
         checkDataSource();
@@ -177,7 +186,10 @@ public class HotelManagerImpl implements HotelManager {
             DBUtils.closeQuietly(conn, st);
         }
     }
-
+    
+    /**
+     * @author Vojta
+     */
     @Override
     public List<Guest> getGuestsOfRoom(Room room) {
         //throw new UnsupportedOperationException("Not supported yet.");
@@ -228,8 +240,10 @@ public class HotelManagerImpl implements HotelManager {
             */
         }
     }
-
-
+    
+    /**
+     * @author Petr
+     */
     @Override
     public List<Room> findAllFreeRooms() {
         checkDataSource();
@@ -237,9 +251,9 @@ public class HotelManagerImpl implements HotelManager {
         PreparedStatement st = null;
         try {
             conn = dataSource.getConnection();
-            st = conn.prepareStatement("SELECT ROOM.ID, CAPACITY, FLOOR, NUMBER, NOTE FROM ROOM"
-                    + "LEFT JOIN GUEST ON ROOM.ID = GUEST.ROOMID"
-                    + "GROUP BY ROOM.ID, CAPACITY, FLOOR, NUMBER, NOTE"
+            st = conn.prepareStatement("SELECT ROOM.ID, CAPACITY, FLOOR, NUMBER, NOTE FROM ROOM "
+                    + "LEFT JOIN GUEST ON ROOM.ID = GUEST.ROOMID "
+                    + "GROUP BY ROOM.ID, CAPACITY, FLOOR, NUMBER, NOTE "
                     + "HAVING COUNT(GUEST.ID) < CAPACITY"); 
             
             return RoomManagerImpl.executeQueryForMultipleRooms(st);  
@@ -252,7 +266,9 @@ public class HotelManagerImpl implements HotelManager {
         }
     }
 
-    
+    /**
+     * @author: Petr
+     */
     private void validateRoom(Room room) throws IllegalArgumentException {
         if(room == null) {
             throw new IllegalArgumentException("Room is null");
@@ -264,7 +280,10 @@ public class HotelManagerImpl implements HotelManager {
             throw new IllegalArgumentException("Id of room is null");
         }
     }
-
+    
+    /**
+     * @author Petr
+     */
     private void validateGuest(Guest guest) throws IllegalArgumentException {
         if(guest == null) {
             throw new IllegalArgumentException("Guest is null");

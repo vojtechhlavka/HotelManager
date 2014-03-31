@@ -103,13 +103,16 @@ public class HotelManagerImplTest {
         
         manager.accommodateGuestInRoom(g1, r1);
         manager.accommodateGuestInRoom(g2, r1);
+        manager.accommodateGuestInRoom(g3, r1); // pridano aby pokoj byl komplente plny
+        manager.accommodateGuestInRoom(g4, r1); // pridano aby pokoj byl komplente plny
+        manager.accommodateGuestInRoom(g5, r1); // pridano aby pokoj byl komplente plny
         
         List<Room> free2 = manager.findAllFreeRooms();        
         assertEquals(true, (free1.size() == free2.size() + 1));
         
             //Test Equals to Coolection, get and made
         List<Guest> guestsOfR1 = manager.getGuestsOfRoom(r1);
-        List<Guest> expected = Arrays.asList(g1, g2);
+        List<Guest> expected = Arrays.asList(g1, g2, g3, g4, g5);
         
         Collections.sort(guestsOfR1, new GuestComparator());
         Collections.sort(expected, new GuestComparator());
@@ -495,7 +498,7 @@ public class HotelManagerImplTest {
         
             //When we accommodate some Guest to room
         result = manager.findAllFreeRooms();
-        expected = Arrays.asList(r3);
+        expected = Arrays.asList(r1, r3); // pokoj r1 je prohlasen za volny pokud ma alespon 1 volne misto
         Collections.sort(result, new RoomComparator());
         Collections.sort(expected, new RoomComparator());
         assertEquals(expected, result);
